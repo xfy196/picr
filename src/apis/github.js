@@ -24,3 +24,8 @@ export const requestBranchCatalogue = async (params) => {
         params: params.query
     })
 }
+export const requestUpload = async (body) => {
+    return request({
+        url: ''
+    })
+}
