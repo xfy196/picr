@@ -30,25 +30,25 @@
             <a-tag color="blue">{{ handleSelectedDir() }}</a-tag>
           </span>
         </div>
-        <div v-if="imgList.length" class="upload__count">
-          {{ upadlodedCount }} / {{ imgList.length }}
-        </div>
+        <div v-if="imgList.length" class="upload__count">已上传 {{ upadlodedCount }} / {{ imgList.length }}</div>
       </div>
       <div v-if="imgList.length" class="upload__list">
         <ul class="list__wrap">
           <li v-for="img in imgList" :key="img.id" class="upload__list-item">
             <div class="img__box">
-              <img :src="img.compressFile.base64" alt="" />
+              <img :src="img.compressFile.base64" alt />
             </div>
             <div class="right__info">
               <div class="top">
                 <a-tooltip>
                   <template #title>
-                    {{ img.isRename ? img.rename : img.filePrefixName
+                    {{
+                      img.isRename ? img.rename : img.filePrefixName
                     }}{{ img.fileSubfixName }}
                   </template>
                   <span class="filename">
-                    {{ img.isRename ? img.rename : img.filePrefixName
+                    {{
+                      img.isRename ? img.rename : img.filePrefixName
                     }}{{ img.fileSubfixName }}
                   </span>
                 </a-tooltip>
@@ -58,22 +58,16 @@
                     <del>{{ img.compressFile.origin.size }}KB</del>
                   </span>
                   <span>{{ img.compressFile.fileLen }}KB</span>
-                  <span>{{
-                    useDateFormat(img.uploadDate, "YYYY-MM-DD HH:mm:ss").value
-                  }}</span>
+                  <span>
+                    {{
+                      useDateFormat(img.uploadDate, "YYYY-MM-DD HH:mm:ss").value
+                    }}
+                  </span>
                 </div>
               </div>
               <div class="bottom">
-                <a-checkbox
-                  @change="onHashNameChange(img)"
-                  v-model:checked="img.isHash"
-                  >哈希化</a-checkbox
-                >
-                <a-checkbox
-                  @change="onRename(img)"
-                  v-model:checked="img.isRename"
-                  >重命名</a-checkbox
-                >
+                <a-checkbox @change="onHashNameChange(img)" v-model:checked="img.isHash">哈希化</a-checkbox>
+                <a-checkbox @change="onRename(img)" v-model:checked="img.isRename">重命名</a-checkbox>
                 <a-input
                   v-if="img.isRename"
                   size="small"
@@ -92,10 +86,8 @@
         </ul>
       </div>
       <a-row justify="end">
-        <a-col :span="2">
-          <a-button style="width: 100%" @click="onBtnUpload" type="primary"
-            >上传</a-button
-          >
+        <a-col :span="3">
+          <a-button :loading="uploadBtnLoading" style="width: 100%" @click="onBtnUpload" type="primary">上传</a-button>
         </a-col>
       </a-row>
     </div>
@@ -112,7 +104,11 @@ import { v4 as uuidv4 } from "uuid";
 import CryptoJS from "crypto-js";
 import { DeleteOutlined } from "@ant-design/icons-vue";
 import { useDateFormat } from "@vueuse/core";
+import { requestUpload } from "../apis/github";
 const userStore = useUserStore();
+
+
+const uploadBtnLoading = ref(false)
 
 const upadlodedCount = ref(0);
 
@@ -144,6 +140,7 @@ const handleUpload = async ({ file }) => {
       fileSubfixName,
       filePrefixName,
       uploadDate: Date.now(),
+      isUpload: false,
       compressFile: compressFileRes,
     });
   } catch (error) {
@@ -154,8 +151,35 @@ const handleUpload = async ({ file }) => {
 };
 
 // 点击上传按钮
-const onBtnUpload = () => {
-  console.log(imgList.value);
+const onBtnUpload = async () => {
+  let newImgList = imgList.value.filter(item => !item.isUpload)
+  uploadBtnLoading.value = true
+  for (let i = 0; i < newImgList.length; i++) {
+    let filename =
+      (newImgList[i].isRename ? newImgList[i].rename : newImgList[i].filePrefixName) + newImgList[i].fileSubfixName;
+    try {
+      await requestUpload({
+        login: config.value.login,
+        repo: config.value.selectedRepos,
+        dirs:
+          config.value.dirMode === 4
+            ? config.value.selectedDirList.join("/")
+            : config.value.selectedDir,
+        filename,
+        message: `上传了${filename}文件，来源于${import.meta.url}`,
+        content: newImgList[i].compressFile.base64.split(",")[1],
+      })
+      message.success({
+        content: `${filename}文件上传成功`,
+      });
+      newImgList[i].isUpload = true
+      upadlodedCount.value++;
+      // 每一次的上传成功我需要更新数据结构通将他保存在本地
+    } catch (error) {
+
+    }
+  }
+  uploadBtnLoading.value = false
 };
 
 const getFilePrefixName = (filename) => {
@@ -169,8 +193,8 @@ const getFileSubfixName = (filename, isHash = true) => {
   let fileNameLastIndex = filename.lastIndexOf(".");
   return isHash
     ? "." +
-        CryptoJS.SHA256(Date.now().toString()).toString().substr(0, 16) +
-        filename.substring(fileNameLastIndex, filename.length)
+    CryptoJS.SHA256(Date.now().toString()).toString().substr(0, 16) +
+    filename.substring(fileNameLastIndex, filename.length)
     : filename.substring(fileNameLastIndex, filename.length);
 };
 // 是否hash变化
@@ -182,7 +206,7 @@ const onHashNameChange = (data) => {
 };
 
 // 重命名事件
-const onRename = (data) => {};
+const onRename = (data) => { };
 
 const onDeleteRename = (data) => {
   data.isRename = false;
@@ -210,7 +234,7 @@ const handlePase = (event) => {
     });
     return;
   }
-  uploadRef.value.customRequest(file);
+  uploadRef.value.customRequest({file});
 };
 </script>
 <style lang="scss">
@@ -256,6 +280,7 @@ const handlePase = (event) => {
           img {
             width: 100%;
             height: 100%;
+            object-fit: cover;
           }
         }
         .right__info {

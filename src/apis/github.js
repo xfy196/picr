@@ -1,4 +1,5 @@
 import request from "../utils/request"
+import path from "path-browserify"
 // 通过token获取的用户信息
 export const requestUserInfo = async () => {
     return request({
@@ -24,8 +25,15 @@ export const requestBranchCatalogue = async (params) => {
         params: params.query
     })
 }
+// 文件上传
 export const requestUpload = async (body) => {
+    console.log(body)
     return request({
-        url: ''
+        url: path.join(`/repos/${body.login}/${body.repo}/contents/${body.dirs}/${body.filename}`),
+        method: "PUT",
+        data: {
+            message: body.message,
+            content: body.content
+        }
     })
 }
