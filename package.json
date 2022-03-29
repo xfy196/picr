@@ -12,8 +12,12 @@
     "@vueuse/core": "^8.2.0",
     "ant-design-vue": "^2.2.8",
     "axios": "^0.26.1",
+    "crypto-js": "^4.1.1",
+    "lrz": "^4.9.41",
+    "normalize.css": "^8.0.1",
     "pinia": "^2.0.12",
     "pinia-plugin-persistedstate": "^1.5.1",
+    "uuid": "^8.3.2",
     "vue": "^3.2.25",
     "vue-router": "^4.0.13"
   },
