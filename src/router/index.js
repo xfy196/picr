@@ -22,6 +22,7 @@ const router = createRouter({
           meta: {
             title: "图片上传",
             icon: "EditOutlined",
+            keepAlive: true
           },
         },
       ],

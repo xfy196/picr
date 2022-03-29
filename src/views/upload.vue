@@ -15,8 +15,8 @@
           <p class="ant-upload-text">拖拽、粘贴、或者点击此处上传</p>
         </a-upload-dragger>
       </a-spin>
-      <div v-if="config.id" class="repo__container">
-        <div>
+      <div class="repo__container">
+        <div v-if="config.id">
           <span>
             仓库:
             <a-tag color="blue">{{ config.selectedRepos }}</a-tag>
@@ -34,7 +34,11 @@
       </div>
       <div v-if="imgList.length" class="upload__list">
         <ul class="list__wrap">
-          <li v-for="img in imgList" :key="img.id" class="upload__list-item">
+          <li v-for="(img, index) in imgList" :key="img.id" class="upload__list-item">
+          <div class="upload__icon" :class="{'success':img.isUpload}">
+            <CloudUploadOutlined v-if="!img.isUpload" rotate="-45" :style="{color: 'white'}"/>
+            <CheckOutlined v-else rotate="-45" />
+          </div>
             <div class="img__box">
               <img :src="img.compressFile.base64" alt />
             </div>
@@ -66,20 +70,25 @@
                 </div>
               </div>
               <div class="bottom">
-                <a-checkbox @change="onHashNameChange(img)" v-model:checked="img.isHash">哈希化</a-checkbox>
-                <a-checkbox @change="onRename(img)" v-model:checked="img.isRename">重命名</a-checkbox>
-                <a-input
-                  v-if="img.isRename"
-                  size="small"
-                  style="max-width: 240px"
-                  allow-clear
-                  v-model:value="img.rename"
-                  placeholder="请输入重新修改的文件名"
-                >
-                  <template #addonAfter>
-                    <DeleteOutlined @click.stop="onDeleteRename(img)" />
-                  </template>
-                </a-input>
+                <div>
+                  <a-checkbox @change="onHashNameChange(img)" v-model:checked="img.isHash">哈希化</a-checkbox>
+                  <a-checkbox @change="onRename(img)" v-model:checked="img.isRename">重命名</a-checkbox>
+                  <a-input
+                    v-if="img.isRename"
+                    size="small"
+                    style="max-width: 240px"
+                    allow-clear
+                    v-model:value="img.rename"
+                    placeholder="请输入重新修改的文件名"
+                  >
+                    <template #addonAfter>
+                      <DeleteOutlined @click.stop="onDeleteRename(img)" />
+                    </template>
+                  </a-input>
+                </div>
+                <div>
+                  <DeleteOutlined class="close__icon" @click.stop="onDeleteImg(index)" />
+                </div>
               </div>
             </div>
           </li>
@@ -94,7 +103,7 @@
   </a-card>
 </template>
 <script setup>
-import { InboxOutlined } from "@ant-design/icons-vue";
+import { InboxOutlined, CloudUploadOutlined, CheckOutlined, DeleteOutlined } from "@ant-design/icons-vue";
 import { ref } from "vue-demi";
 import { message } from "ant-design-vue";
 import lrz from "lrz";
@@ -102,7 +111,6 @@ import { useUserStore } from "../store/user";
 import { storeToRefs } from "pinia";
 import { v4 as uuidv4 } from "uuid";
 import CryptoJS from "crypto-js";
-import { DeleteOutlined } from "@ant-design/icons-vue";
 import { useDateFormat } from "@vueuse/core";
 import { requestUpload } from "../apis/github";
 const userStore = useUserStore();
@@ -181,6 +189,10 @@ const onBtnUpload = async () => {
   }
   uploadBtnLoading.value = false
 };
+
+const onDeleteImg = (index) => {
+  imgList.value.splice(index, 1)
+}
 
 const getFilePrefixName = (filename) => {
   let fileNameLastIndex = filename.lastIndexOf(".");
@@ -266,6 +278,29 @@ const handlePase = (event) => {
         padding: 4px 8px;
         box-sizing: border-box;
         display: flex;
+        position: relative;
+        overflow: hidden;
+        .upload__icon{
+          box-sizing: border-box;
+          color: #fff;
+          position: absolute;
+          right: -17px;
+          top: -7px;
+          width: 46px;
+          height: 26px;
+          text-align: center;
+          transform: rotate(45deg);
+          box-shadow: 0 1px 1px #b3b3b3;
+          background: #e6a23c;
+          position: absolute;
+          display: flex;
+          align-items: flex-end;
+          justify-content: center;
+          padding-bottom: 3px;
+          &.success{
+            background-color: #87d068;
+          }
+        }
         &:first-of-type {
           margin-top: 0;
         }
@@ -291,6 +326,11 @@ const handlePase = (event) => {
           .top,
           .bottom {
             display: flex;
+            align-items: center;
+          }
+          .bottom {
+            display: flex;
+            justify-content: space-between;
           }
           .top {
             justify-content: space-between;
@@ -303,6 +343,7 @@ const handlePase = (event) => {
               white-space: nowrap;
             }
             .img__info {
+              margin-right: 12px;
               span {
                 padding: 2px 4px;
                 background: #e6e6e6;
