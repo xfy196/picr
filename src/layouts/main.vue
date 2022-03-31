@@ -1,5 +1,5 @@
 <template>
-  <a-layout-content>
+  <a-layout-content class="layout__container">
     <!-- <router-view /> -->
     <router-view v-slot="{ Component }">
       <keep-alive>
@@ -21,4 +21,8 @@
 import {useRoute} from "vue-router"
 const route = useRoute()
 </script>
-<style lang=""></style>
+<style lang="scss" scoped>
+.layout__container{
+  height: calc(100vh - 64px)
+}
+</style>

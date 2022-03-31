@@ -27,7 +27,6 @@ export const requestBranchCatalogue = async (params) => {
 }
 // 文件上传
 export const requestUpload = async (body) => {
-    console.log(body)
     return request({
         url: path.join(`/repos/${body.login}/${body.repo}/contents/${body.dirs}/${body.filename}`),
         method: "PUT",

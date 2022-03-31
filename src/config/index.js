@@ -1,1 +1,3 @@
-export const token = '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'
+export const token = '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'
+export const githubRaw = 'https://raw.githubusercontent.com/'
+export const jsdelivrRaw = "https://cdn.jsdelivr.net/gh/"

@@ -25,6 +25,15 @@ const router = createRouter({
             keepAlive: true
           },
         },
+        {
+          path: "/bedmanager",
+          component: () => import("@/views/bedmanager.vue"),
+          meta: {
+            title: "图床管理",
+            icon: "SettingOutlined",
+            keepAlive: true
+          },
+        },
       ],
     },
   ],

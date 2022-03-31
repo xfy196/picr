@@ -1,6 +1,7 @@
 <template>
   <a-card @paste="handlePase" class="container">
-    <div class="wrapper">
+    <uploadLeft v-if="uploadImgList.length" />
+    <div :class="{ 'page-upload-right': uploadImgList.length }" class="wrapper">
       <a-spin :spinning="compressLoading" tip="正在压缩中">
         <a-upload-dragger
           ref="uploadRef"
@@ -30,15 +31,25 @@
             <a-tag color="blue">{{ handleSelectedDir() }}</a-tag>
           </span>
         </div>
-        <div v-if="imgList.length" class="upload__count">已上传 {{ upadlodedCount }} / {{ imgList.length }}</div>
+        <div v-if="imgList.length" class="upload__count">
+          已上传 {{ upadlodedCount }} / {{ imgList.length }}
+        </div>
       </div>
       <div v-if="imgList.length" class="upload__list">
         <ul class="list__wrap">
-          <li v-for="(img, index) in imgList" :key="img.id" class="upload__list-item">
-          <div class="upload__icon" :class="{'success':img.isUpload}">
-            <CloudUploadOutlined v-if="!img.isUpload" rotate="-45" :style="{color: 'white'}"/>
-            <CheckOutlined v-else rotate="-45" />
-          </div>
+          <li
+            v-for="(img, index) in imgList"
+            :key="img.id"
+            class="upload__list-item"
+          >
+            <div class="upload__icon" :class="{ success: img.isUpload }">
+              <CloudUploadOutlined
+                v-if="!img.isUpload"
+                rotate="-45"
+                :style="{ color: 'white' }"
+              />
+              <CheckOutlined v-else rotate="-45" />
+            </div>
             <div class="img__box">
               <img :src="img.compressFile.base64" alt />
             </div>
@@ -46,14 +57,10 @@
               <div class="top">
                 <a-tooltip>
                   <template #title>
-                    {{
-                      img.isRename ? img.rename : img.filePrefixName
-                    }}{{ img.fileSubfixName }}
+                    {{ getFileName(img) }}
                   </template>
                   <span class="filename">
-                    {{
-                      img.isRename ? img.rename : img.filePrefixName
-                    }}{{ img.fileSubfixName }}
+                    {{ getFileName(img) }}
                   </span>
                 </a-tooltip>
 
@@ -70,24 +77,69 @@
                 </div>
               </div>
               <div class="bottom">
-                <div>
-                  <a-checkbox @change="onHashNameChange(img)" v-model:checked="img.isHash">哈希化</a-checkbox>
-                  <a-checkbox @change="onRename(img)" v-model:checked="img.isRename">重命名</a-checkbox>
-                  <a-input
-                    v-if="img.isRename"
-                    size="small"
-                    style="max-width: 240px"
-                    allow-clear
-                    v-model:value="img.rename"
-                    placeholder="请输入重新修改的文件名"
-                  >
-                    <template #addonAfter>
-                      <DeleteOutlined @click.stop="onDeleteRename(img)" />
-                    </template>
-                  </a-input>
+                <div v-show="!img.isUpload" class="rename-box">
+                  <div class="hash__rename">
+                    <a-checkbox
+                      @change="onHashNameChange(img)"
+                      v-model:checked="img.isHash"
+                      >哈希化</a-checkbox
+                    >
+                    <a-checkbox
+                      @change="onRename(img)"
+                      v-model:checked="img.isRename"
+                      >重命名</a-checkbox
+                    >
+                    <a-input
+                      v-if="img.isRename"
+                      size="small"
+                      style="max-width: 240px"
+                      allow-clear
+                      v-model:value="img.rename"
+                      placeholder="请输入重新修改的文件名"
+                    >
+                      <template #addonAfter>
+                        <DeleteOutlined @click.stop="onDeleteRename(img)" />
+                      </template>
+                    </a-input>
+                  </div>
+                  <div>
+                    <DeleteOutlined
+                      class="close__icon"
+                      @click.stop="onDeleteImg(index)"
+                    />
+                  </div>
                 </div>
-                <div>
-                  <DeleteOutlined class="close__icon" @click.stop="onDeleteImg(index)" />
+                <div v-show="img.isUpload" class="copy-external-link-box">
+                  <div class="markdown__icon-box">
+                    <a-tooltip>
+                      <template #title> 点击转换markdown格式外链 </template>
+                      <Icon
+                        @click.stop="handleToMarkdown(index)"
+                        class="markdown__icon"
+                        :component="
+                          !img.isMarkdown ? MarkdownIcon : MarkdownIconActive
+                        "
+                      />
+                    </a-tooltip>
+                  </div>
+                  <div class="copy__btn--box">
+                    <a-tooltip>
+                      <template #title> 点击复制GitHub外链 </template>
+                      <span
+                        @click.stop="handleCopyExternalLinks('github', index)"
+                        class="copy__btn"
+                        >GitHub</span
+                      >
+                    </a-tooltip>
+                    <a-tooltip>
+                      <template #title> 点击复制CDN外链 </template>
+                      <span
+                        @click.stop="handleCopyExternalLinks('cdn', index)"
+                        class="copy__btn"
+                        >CDN</span
+                      >
+                    </a-tooltip>
+                  </div>
                 </div>
               </div>
             </div>
@@ -96,27 +148,50 @@
       </div>
       <a-row justify="end">
         <a-col :span="3">
-          <a-button :loading="uploadBtnLoading" style="width: 100%" @click="onBtnUpload" type="primary">上传</a-button>
+          <a-button
+            :loading="uploadBtnLoading"
+            style="width: 100%"
+            @click="onBtnUpload"
+            type="primary"
+            >上传</a-button
+          >
         </a-col>
       </a-row>
     </div>
   </a-card>
 </template>
 <script setup>
-import { InboxOutlined, CloudUploadOutlined, CheckOutlined, DeleteOutlined } from "@ant-design/icons-vue";
+import {
+  InboxOutlined,
+  CloudUploadOutlined,
+  CheckOutlined,
+  DeleteOutlined,
+} from "@ant-design/icons-vue";
+import MarkdownIcon from "@/assets/imgs/markdown.svg";
+import MarkdownIconActive from "@/assets/imgs/markdown-active.svg";
 import { ref } from "vue-demi";
 import { message } from "ant-design-vue";
 import lrz from "lrz";
 import { useUserStore } from "../store/user";
 import { storeToRefs } from "pinia";
 import { v4 as uuidv4 } from "uuid";
-import CryptoJS from "crypto-js";
 import { useDateFormat } from "@vueuse/core";
 import { requestUpload } from "../apis/github";
+import Icon from "@ant-design/icons-vue";
+import { githubRaw, jsdelivrRaw } from "../config/index";
+import path from "path-browserify";
+import { useImgBedStore } from "../store/imgBed";
+import {
+  getFilePrefixName,
+  getFileSubfixName,
+  getFileName,
+} from "../utils/useFile";
+import { useCopyExternalLinks } from "../utils/useCopExternalLinks";
+import uploadLeft from "../components/uploadLeft/index.vue";
+
 const userStore = useUserStore();
 
-
-const uploadBtnLoading = ref(false)
+const uploadBtnLoading = ref(false);
 
 const upadlodedCount = ref(0);
 
@@ -127,6 +202,10 @@ const uploadRef = ref(null);
 const compressLoading = ref(false);
 
 const imgList = ref([]);
+
+const imgBedStore = useImgBedStore();
+
+const { uploadImgList } = storeToRefs(imgBedStore);
 
 const handleSelectedDir = () => {
   return config.value.dirMode === 4
@@ -150,6 +229,9 @@ const handleUpload = async ({ file }) => {
       uploadDate: Date.now(),
       isUpload: false,
       compressFile: compressFileRes,
+      isMarkdown: false,
+      githubUrl: "",
+      jsdelivrUrl: "",
     });
   } catch (error) {
     console.log(error);
@@ -160,11 +242,19 @@ const handleUpload = async ({ file }) => {
 
 // 点击上传按钮
 const onBtnUpload = async () => {
-  let newImgList = imgList.value.filter(item => !item.isUpload)
-  uploadBtnLoading.value = true
-  for (let i = 0; i < newImgList.length; i++) {
-    let filename =
-      (newImgList[i].isRename ? newImgList[i].rename : newImgList[i].filePrefixName) + newImgList[i].fileSubfixName;
+  if (upadlodedCount.value === imgList.value.length) {
+    message.info({
+      content: "已全部上上传成功，无需重复上传",
+    });
+    return;
+  }
+  uploadBtnLoading.value = true;
+  for (let i = 0; i < imgList.value.length; i++) {
+    if (imgList.value[i].isUpload) {
+      continue;
+    }
+    let filename = getFileName(imgList.value[i]);
+
     try {
       await requestUpload({
         login: config.value.login,
@@ -175,40 +265,53 @@ const onBtnUpload = async () => {
             : config.value.selectedDir,
         filename,
         message: `上传了${filename}文件，来源于${import.meta.url}`,
-        content: newImgList[i].compressFile.base64.split(",")[1],
-      })
+        content: imgList.value[i].compressFile.base64.split(",")[1],
+      });
       message.success({
         content: `${filename}文件上传成功`,
       });
-      newImgList[i].isUpload = true
+      imgList.value[i].isUpload = true;
+      imgList.value[i].githubUrl = path.join(
+        githubRaw,
+        `/${config.value.login}/${config.value.selectedRepos}/${
+          config.value.selectedBranch
+        }/${
+          config.value.dirMode === 4
+            ? config.value.selectedDirList.join("/")
+            : config.value.selectedDir
+        }/${filename}`
+      );
+      imgList.value[i].jsdelivrUrl = path.join(
+        jsdelivrRaw,
+        `/${config.value.login}/${config.value.selectedRepos}@${
+          config.value.selectedBranch
+        }/${
+          config.value.dirMode === 4
+            ? config.value.selectedDirList.join("/")
+            : config.value.selectedDir
+        }/${filename}`
+      );
       upadlodedCount.value++;
       // 每一次的上传成功我需要更新数据结构通将他保存在本地
-    } catch (error) {
-
-    }
+      imgBedStore.setUploadImgList(imgList.value[i]);
+    } catch (error) {}
   }
-  uploadBtnLoading.value = false
+  uploadBtnLoading.value = false;
 };
 
 const onDeleteImg = (index) => {
-  imgList.value.splice(index, 1)
-}
-
-const getFilePrefixName = (filename) => {
-  let fileNameLastIndex = filename.lastIndexOf(".");
-  let filePrefixName = filename.substring(0, fileNameLastIndex);
-  return filePrefixName;
+  imgList.value.splice(index, 1);
 };
 
-const getFileSubfixName = (filename, isHash = true) => {
-  // 生成上传的文件名字
-  let fileNameLastIndex = filename.lastIndexOf(".");
-  return isHash
-    ? "." +
-    CryptoJS.SHA256(Date.now().toString()).toString().substr(0, 16) +
-    filename.substring(fileNameLastIndex, filename.length)
-    : filename.substring(fileNameLastIndex, filename.length);
+const handleToMarkdown = (index) => {
+  imgList.value[index].isMarkdown = !imgList.value[index].isMarkdown;
 };
+
+// 点击复制外链
+const handleCopyExternalLinks = (mode = "github", index) => {
+  useCopyExternalLinks(mode, imgList.value[index]);
+};
+
 // 是否hash变化
 const onHashNameChange = (data) => {
   data.fileSubfixName = getFileSubfixName(
@@ -218,7 +321,7 @@ const onHashNameChange = (data) => {
 };
 
 // 重命名事件
-const onRename = (data) => { };
+const onRename = (data) => {};
 
 const onDeleteRename = (data) => {
   data.isRename = false;
@@ -246,113 +349,171 @@ const handlePase = (event) => {
     });
     return;
   }
-  uploadRef.value.customRequest({file});
+  uploadRef.value.customRequest({ file });
 };
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .container {
   height: 100%;
-  .wrapper {
-    margin: 0 auto;
-    max-width: 888px;
-    .ant-upload {
-      height: 300px;
-    }
-    .repo__container {
-      margin-top: 16px;
-      display: flex;
-      justify-content: space-between;
-    }
-    .upload__list {
-      border: 1px solid #ccc;
-      padding: 8px 12px;
-      box-sizing: border-box;
-      margin-top: 12px;
-      margin-bottom: 12px;
-      border-radius: 4px;
-      .upload__list-item {
-        height: 68px;
-        border: 1px solid #ccc;
-        margin-top: 12px;
-        border-radius: 4px;
-        padding: 4px 8px;
+  :deep(.ant-card-body) {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    height: 100%;
+    .wrapper {
+      margin: 0 auto;
+      max-width: 888px;
+      flex: auto;
+      overflow: auto;
+      &.page-upload-right {
+        padding: 20px;
         box-sizing: border-box;
+        box-shadow: 0px 0px 5.3px rgba(0, 0, 0, 0.032),
+          0px 0px 17.9px rgba(0, 0, 0, 0.048), 0px 0px 80px rgba(0, 0, 0, 0.08);
+        border-radius: 8px;
+      }
+      .ant-upload {
+        height: 300px;
+        border-radius: 4px;
+      }
+      .repo__container {
+        margin-top: 16px;
         display: flex;
-        position: relative;
-        overflow: hidden;
-        .upload__icon{
-          box-sizing: border-box;
-          color: #fff;
-          position: absolute;
-          right: -17px;
-          top: -7px;
-          width: 46px;
-          height: 26px;
-          text-align: center;
-          transform: rotate(45deg);
-          box-shadow: 0 1px 1px #b3b3b3;
-          background: #e6a23c;
-          position: absolute;
-          display: flex;
-          align-items: flex-end;
-          justify-content: center;
-          padding-bottom: 3px;
-          &.success{
-            background-color: #87d068;
-          }
-        }
-        &:first-of-type {
-          margin-top: 0;
-        }
-        .img__box {
-          width: 56px;
-          height: 56px;
+        justify-content: space-between;
+      }
+      .upload__list {
+        border: 1px solid #ccc;
+        padding: 8px 12px;
+        box-sizing: border-box;
+        margin-top: 12px;
+        margin-bottom: 12px;
+        border-radius: 4px;
+        .upload__list-item {
+          height: 68px;
           border: 1px solid #ccc;
+          margin-top: 12px;
           border-radius: 4px;
-          overflow: hidden;
+          padding: 4px 8px;
           box-sizing: border-box;
-          margin-right: 12px;
-          img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-          }
-        }
-        .right__info {
           display: flex;
-          flex-direction: column;
-          flex: 1;
-          justify-content: space-evenly;
-          .top,
-          .bottom {
+          position: relative;
+          overflow: hidden;
+          .upload__icon {
+            box-sizing: border-box;
+            color: #fff;
+            position: absolute;
+            right: -17px;
+            top: -7px;
+            width: 46px;
+            height: 26px;
+            text-align: center;
+            transform: rotate(45deg);
+            box-shadow: 0 1px 1px #b3b3b3;
+            background: #e6a23c;
+            position: absolute;
             display: flex;
-            align-items: center;
-          }
-          .bottom {
-            display: flex;
-            justify-content: space-between;
-          }
-          .top {
-            justify-content: space-between;
-            color: #50505c;
-            .filename {
-              display: inline-block;
-              max-width: 240px;
-              text-overflow: ellipsis;
-              overflow: hidden;
-              white-space: nowrap;
+            align-items: flex-end;
+            justify-content: center;
+            padding-bottom: 3px;
+            &.success {
+              background-color: #87d068;
             }
-            .img__info {
-              margin-right: 12px;
-              span {
-                padding: 2px 4px;
-                background: #e6e6e6;
-                margin: 0 6px;
-                border-radius: 4px;
-                font-size: 12px;
-                color: #50505c;
-                &:nth-of-type(2) {
-                  color: #228eff;
+          }
+          &:first-of-type {
+            margin-top: 0;
+          }
+          .img__box {
+            width: 56px;
+            height: 56px;
+            border: 1px solid #ccc;
+            flex-shrink: 0;
+            border-radius: 4px;
+            overflow: hidden;
+            box-sizing: border-box;
+            margin-right: 12px;
+            img {
+              width: 100%;
+              height: 100%;
+              object-fit: contain;
+            }
+          }
+          .right__info {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            justify-content: space-evenly;
+            .top,
+            .bottom {
+              display: flex;
+              align-items: center;
+            }
+            .bottom {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              .rename-box {
+                flex: 1;
+                display: flex;
+                justify-content: space-between;
+                .hash__rename {
+                  display: flex;
+                  flex: 1;
+                }
+              }
+              .copy-external-link-box {
+                flex: 1;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                .markdown__icon {
+                  display: flex;
+                  align-items: center;
+                  svg {
+                    font-size: 24px;
+                  }
+                }
+                .copy__btn--box {
+                  .copy__btn {
+                    font-size: 12px;
+                    border: 1px solid #50505c;
+                    border-radius: 4px;
+                    padding: 2px;
+                    color: #50505c;
+                    cursor: pointer;
+                    &:hover {
+                      background: #50505c;
+                      color: #ffffff;
+                    }
+                    &:first-of-type {
+                      margin-right: 8px;
+                    }
+                  }
+                }
+              }
+            }
+            .top {
+              justify-content: space-between;
+              color: #50505c;
+              .filename {
+                flex: 1;
+                display: inline-block;
+                min-width: 120px;
+                text-overflow: ellipsis;
+                overflow: hidden;
+                white-space: nowrap;
+              }
+              .img__info {
+                margin-right: 12px;
+                span {
+                  padding: 2px 4px;
+                  background: #e6e6e6;
+                  margin: 0 6px;
+                  border-radius: 4px;
+                  font-size: 12px;
+                  color: #50505c;
+                  &:nth-of-type(2) {
+                    color: #228eff;
+                  }
                 }
               }
             }
