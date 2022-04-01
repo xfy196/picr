@@ -1,1 +1,0 @@
-import{_ as e}from"./index.aff785f4.js";import{o as r,i as a}from"./vendor.77125dce.js";const n={};function o(c,t){return r(),a("div",null," bedmanager ")}var s=e(n,[["render",o]]);export{s as default};
