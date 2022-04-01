@@ -268,7 +268,7 @@ const onBtnUpload = async () => {
             ? config.value.selectedDirList.join("/")
             : config.value.selectedDir,
         filename,
-        message: `上传了${filename}文件，来源于${import.meta.url}`,
+        message: `上传了${filename}文件，来源于${location.origin + location.pathname}`,
         content: imgList.value[i].compressFile.base64.split(",")[1],
       });
       message.success({
