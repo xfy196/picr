@@ -1,5 +1,5 @@
 <a href="https://xfy196.github.io/picr/" >
-<img width="100" align="right" alt="picr" src="https://cdn.jsdelivr.net/gh/xfy196/image-hosting@master/picr/picr-logo.png">
+<img width="100" align="right" alt="picr" src="https://cdn.jsdelivr.net/gh/xfy196/picr@master/src/assets/logo.png">
 </a>
 
 # PicR 图床
