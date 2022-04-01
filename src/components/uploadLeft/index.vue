@@ -2,6 +2,21 @@
   <div class="upload-page-container">
     <ul class="imgList">
       <li class="imgItem" v-for="(img, index) in uploadImgList" :key="img.id">
+        <div class="more">
+          <a-dropdown-button
+            trigger="click"
+            class="more__btn"
+            @click="handleButtonClick"
+          >
+            <template #overlay>
+              <a-menu @click="handleImgMenuClick">
+                <a-menu-item :key="`delete-${index}`"> 删除 </a-menu-item>
+                <a-menu-item :key="`rename-${index}`"> 重命名 </a-menu-item>
+                <a-menu-item :key="`attribute-${index}`"> 属性 </a-menu-item>
+              </a-menu>
+            </template>
+          </a-dropdown-button>
+        </div>
         <img class="img" :src="img.compressFile.base64" alt="" />
         <a-tooltip>
           <template #title>
@@ -47,22 +62,40 @@
 import MarkdownIcon from "@/assets/imgs/markdown.svg";
 import MarkdownIconActive from "@/assets/imgs/markdown-active.svg";
 import { useImgBedStore } from "@/store/imgBed";
-import Icon from "@ant-design/icons-vue"
+import {message} from "ant-design-vue"
+import Icon from "@ant-design/icons-vue";
 import { storeToRefs } from "pinia";
-import {
-  getFileName,
-} from "@/utils/useFile";
+import { getFileName } from "@/utils/useFile";
 import { useCopyExternalLinks } from "@/utils/useCopExternalLinks";
 const imgBedStore = useImgBedStore();
 const { uploadImgList } = storeToRefs(imgBedStore);
 
 const handleToMarkdown = (index) => {
-  uploadImgList.value[index].isMarkdown = !uploadImgList.value[index].isMarkdown;
+  uploadImgList.value[index].isMarkdown =
+    !uploadImgList.value[index].isMarkdown;
 };
 
 // 点击复制外链
 const handleCopyExternalLinks = (mode = "github", index) => {
   useCopyExternalLinks(mode, uploadImgList.value[index]);
+};
+
+// 图片的删除操作
+const handleImgMenuClick = ({key}) => {
+  let [attr, index] = key.split("-")
+  switch (attr) {
+    case "delete":
+      let [img] = uploadImgList.value.splice(index, 1)
+      message.success({
+        content: `${getFileName(img)}文件删除成功`
+      })
+      break;
+    case "rename":
+      console.log("重命名");
+      break;
+    case "attribute":
+      console.log("attribute");
+  }
 };
 </script>
 <style lang="scss" scoped>
@@ -86,21 +119,32 @@ const handleCopyExternalLinks = (mode = "github", index) => {
       border-radius: 6px;
       padding-bottom: 6px;
       overflow: hidden;
-      &:hover{
-        box-shadow:
-          0px 0px 5.3px rgba(0, 0, 0, 0.101),
-          0px 0px 17.9px rgba(0, 0, 0, 0.149),
-          0px 0px 80px rgba(0, 0, 0, 0.25)
-        ;
-
+      position: relative;
+      .more {
+        position: absolute;
+        right: 8px;
+        display: none;
+        top: 8px;
+        :deep(.more__btn) {
+          button {
+            border-radius: 100%;
+          }
+        }
+      }
+      &:hover {
+        box-shadow: 0px 0px 5.3px rgba(0, 0, 0, 0.101),
+          0px 0px 17.9px rgba(0, 0, 0, 0.149), 0px 0px 80px rgba(0, 0, 0, 0.25);
+        .more {
+          display: block;
+        }
       }
       &:last-of-type {
         margin-bottom: 12px;
       }
       .img {
         width: 100%;
-        height: 82px;
-        object-fit: contain;
+        height: 100%;
+        object-fit: cover;
       }
       .filename {
         text-overflow: ellipsis;

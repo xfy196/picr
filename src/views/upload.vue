@@ -44,10 +44,11 @@
           >
             <div class="upload__icon" :class="{ success: img.isUpload }">
               <CloudUploadOutlined
-                v-if="!img.isUpload"
+                v-if="img.isUpload === 'no'"
                 rotate="-45"
                 :style="{ color: 'white' }"
               />
+              <LoadingOutlined v-else-if="img.isUpload === 'loading'" />
               <CheckOutlined v-else rotate="-45" />
             </div>
             <div class="img__box">
@@ -77,7 +78,7 @@
                 </div>
               </div>
               <div class="bottom">
-                <div v-show="!img.isUpload" class="rename-box">
+                <div v-show="img.isUpload==='no'" class="rename-box">
                   <div class="hash__rename">
                     <a-checkbox
                       @change="onHashNameChange(img)"
@@ -94,6 +95,7 @@
                       size="small"
                       style="max-width: 240px"
                       allow-clear
+                      @blur="handleRenameBlur(index)"
                       v-model:value="img.rename"
                       placeholder="请输入重新修改的文件名"
                     >
@@ -109,7 +111,7 @@
                     />
                   </div>
                 </div>
-                <div v-show="img.isUpload" class="copy-external-link-box">
+                <div v-show="img.isUpload==='yes'" class="copy-external-link-box">
                   <div class="markdown__icon-box">
                     <a-tooltip>
                       <template #title> 点击转换markdown格式外链 </template>
@@ -166,6 +168,7 @@ import {
   CloudUploadOutlined,
   CheckOutlined,
   DeleteOutlined,
+  LoadingOutlined,
 } from "@ant-design/icons-vue";
 import MarkdownIcon from "@/assets/imgs/markdown.svg";
 import MarkdownIconActive from "@/assets/imgs/markdown-active.svg";
@@ -227,7 +230,7 @@ const handleUpload = async ({ file }) => {
       fileSubfixName,
       filePrefixName,
       uploadDate: Date.now(),
-      isUpload: false,
+      isUpload: "no",
       compressFile: compressFileRes,
       isMarkdown: false,
       githubUrl: "",
@@ -250,13 +253,14 @@ const onBtnUpload = async () => {
   }
   uploadBtnLoading.value = true;
   for (let i = 0; i < imgList.value.length; i++) {
-    if (imgList.value[i].isUpload) {
+    if (imgList.value[i].isUpload === "yes") {
       continue;
     }
     let filename = getFileName(imgList.value[i]);
 
     try {
-      await requestUpload({
+      imgList.value[i].isUpload = "loading";
+      let res = await requestUpload({
         login: config.value.login,
         repo: config.value.selectedRepos,
         dirs:
@@ -270,7 +274,8 @@ const onBtnUpload = async () => {
       message.success({
         content: `${filename}文件上传成功`,
       });
-      imgList.value[i].isUpload = true;
+      imgList.value[i].sha = res.content.sha;
+      imgList.value[i].isUpload = "yes";
       imgList.value[i].githubUrl = path.join(
         githubRaw,
         `/${config.value.login}/${config.value.selectedRepos}/${
@@ -299,9 +304,15 @@ const onBtnUpload = async () => {
   uploadBtnLoading.value = false;
 };
 
+// 删除上传文件的列表
 const onDeleteImg = (index) => {
   imgList.value.splice(index, 1);
 };
+
+const handleRenameBlur = (index) => {
+  imgList.value[index].filePrefixName = imgList.value[index].rename
+  imgList.value[index].isRename = false
+}
 
 const handleToMarkdown = (index) => {
   imgList.value[index].isMarkdown = !imgList.value[index].isMarkdown;

@@ -22,7 +22,6 @@ const router = createRouter({
           meta: {
             title: "图片上传",
             icon: "EditOutlined",
-            keepAlive: true
           },
         },
         {
@@ -31,7 +30,6 @@ const router = createRouter({
           meta: {
             title: "图床管理",
             icon: "SettingOutlined",
-            keepAlive: true
           },
         },
       ],

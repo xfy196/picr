@@ -36,3 +36,11 @@ export const requestUpload = async (body) => {
         }
     })
 }
+// 删除文件
+export const requestDeleteFile = async (body) => {
+    return request({
+        url: path.join(`/repos/${body.login}/${body.repo}/contents/${body.dirs}/${body.filename}`),
+        data: body.data,
+        method: "DELETE"
+    })
+}
