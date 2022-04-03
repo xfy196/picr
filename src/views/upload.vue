@@ -378,7 +378,7 @@ const handlePase = (event) => {
     height: 100%;
     .wrapper {
       margin: 0 auto;
-      max-width: 888px;
+      min-width: 888px;
       flex: auto;
       overflow: auto;
       &.page-upload-right {
