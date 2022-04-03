@@ -1,7 +1,7 @@
 <template>
   <a-layout-header class="header">
     <div class="header__left">
-      <h1>
+      <h1 @click.stop="router.push('/')">
         <img src="../assets/logo.png" class="logo" alt="" />
       </h1>
       <h2 class="logo__txt">PicR</h2>
@@ -27,6 +27,8 @@
   </a-layout-header>
 </template>
 <script setup>
+import {useRouter} from "vue-router"
+
 import { UserOutlined } from "@ant-design/icons-vue";
 
 import { useUserStore } from "../store/user";
@@ -37,6 +39,7 @@ import { storeToRefs } from "pinia";
 
 const userStore = useUserStore();
 
+const router = useRouter()
 
 const { config } = storeToRefs(userStore);
 

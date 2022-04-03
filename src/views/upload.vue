@@ -78,7 +78,7 @@
                 </div>
               </div>
               <div class="bottom">
-                <div v-show="img.isUpload==='no'" class="rename-box">
+                <div v-show="img.isUpload === 'no'" class="rename-box">
                   <div class="hash__rename">
                     <a-checkbox
                       @change="onHashNameChange(img)"
@@ -111,7 +111,10 @@
                     />
                   </div>
                 </div>
-                <div v-show="img.isUpload==='yes'" class="copy-external-link-box">
+                <div
+                  v-show="img.isUpload === 'yes'"
+                  class="copy-external-link-box"
+                >
                   <div class="markdown__icon-box">
                     <a-tooltip>
                       <template #title> 点击转换markdown格式外链 </template>
@@ -268,7 +271,9 @@ const onBtnUpload = async () => {
             ? config.value.selectedDirList.join("/")
             : config.value.selectedDir,
         filename,
-        message: `上传了${filename}文件，来源于${location.origin + location.pathname}`,
+        message: `上传了${filename}文件，来源于${
+          location.origin + location.pathname
+        }`,
         content: imgList.value[i].compressFile.base64.split(",")[1],
       });
       message.success({
@@ -310,9 +315,9 @@ const onDeleteImg = (index) => {
 };
 
 const handleRenameBlur = (index) => {
-  imgList.value[index].filePrefixName = imgList.value[index].rename
-  imgList.value[index].isRename = false
-}
+  imgList.value[index].filePrefixName = imgList.value[index].rename;
+  imgList.value[index].isRename = false;
+};
 
 const handleToMarkdown = (index) => {
   imgList.value[index].isMarkdown = !imgList.value[index].isMarkdown;
@@ -382,7 +387,13 @@ const handlePase = (event) => {
         box-shadow: 0px 0px 5.3px rgba(0, 0, 0, 0.032),
           0px 0px 17.9px rgba(0, 0, 0, 0.048), 0px 0px 80px rgba(0, 0, 0, 0.08);
         border-radius: 8px;
+        @media screen and (max-width: 888px) {
+          padding: 0;
+          box-shadow: none;
+          border-radius: 0;
+        }
       }
+
       .ant-upload {
         height: 300px;
         border-radius: 4px;

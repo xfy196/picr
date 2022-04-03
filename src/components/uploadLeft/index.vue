@@ -62,7 +62,7 @@
 import MarkdownIcon from "@/assets/imgs/markdown.svg";
 import MarkdownIconActive from "@/assets/imgs/markdown-active.svg";
 import { useImgBedStore } from "@/store/imgBed";
-import {message} from "ant-design-vue"
+import { message } from "ant-design-vue";
 import Icon from "@ant-design/icons-vue";
 import { storeToRefs } from "pinia";
 import { getFileName } from "@/utils/useFile";
@@ -81,14 +81,14 @@ const handleCopyExternalLinks = (mode = "github", index) => {
 };
 
 // 图片的删除操作
-const handleImgMenuClick = ({key}) => {
-  let [attr, index] = key.split("-")
+const handleImgMenuClick = ({ key }) => {
+  let [attr, index] = key.split("-");
   switch (attr) {
     case "delete":
-      let [img] = uploadImgList.value.splice(index, 1)
+      let [img] = uploadImgList.value.splice(index, 1);
       message.success({
-        content: `${getFileName(img)}文件删除成功`
-      })
+        content: `${getFileName(img)}文件删除成功`,
+      });
       break;
     case "rename":
       console.log("重命名");
@@ -185,6 +185,11 @@ const handleImgMenuClick = ({key}) => {
         }
       }
     }
+  }
+}
+@media screen and (max-width: 888px) {
+  .upload-page-container {
+    display: none;
   }
 }
 </style>
