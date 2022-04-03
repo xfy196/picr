@@ -25,12 +25,13 @@ export const requestBranchCatalogue = async (params) => {
         params: params.query
     })
 }
-// 文件上传
+// 文件上传 同时支持新增和修改
 export const requestUpload = async (body) => {
     return request({
         url: path.join(`/repos/${body.login}/${body.repo}/contents/${body.dirs}/${body.filename}`),
         method: "PUT",
         data: {
+            branch: body.branch,
             message: body.message,
             content: body.content
         }

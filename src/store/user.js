@@ -1,5 +1,7 @@
 import { defineStore } from "pinia";
 import { requestBranchCatalogue, requestRepos, requestUserInfo, requetsBranches } from "../apis/github";
+import path from "path-browserify"
+import mime from "mime"
 export const useUserStore = defineStore("user", {
   state: () => ({
     config: {
@@ -16,6 +18,7 @@ export const useUserStore = defineStore("user", {
     },
     repos: [],
     branches: [],
+    contents: []
   }),
   actions: {
     async getUser(token) {
@@ -70,10 +73,17 @@ export const useUserStore = defineStore("user", {
           login: this.config.login,
           ...params
         })
+        console.log(contents)
+        this.contents = contents
         return contents
       } catch (error) {
         
       }
+    }
+  },
+  getters: {
+    imageContents: (state) => {
+      return state.contents.filter(file => file.type==='dir' || mime.getType(file.name).startsWith("image"))
     }
   },
   persist: {

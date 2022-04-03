@@ -4,6 +4,7 @@
     <div :class="{ 'page-upload-right': uploadImgList.length }" class="wrapper">
       <a-spin :spinning="compressLoading" tip="正在压缩中">
         <a-upload-dragger
+        :accept="mimeImg"
           ref="uploadRef"
           name="file"
           :multiple="true"
@@ -51,9 +52,7 @@
               <LoadingOutlined v-else-if="img.isUpload === 'loading'" />
               <CheckOutlined v-else rotate="-45" />
             </div>
-            <div class="img__box">
-              <img :src="img.compressFile.base64" alt />
-            </div>
+            <a-image class="img__box" :src="img.compressFile.base64" />
             <div class="right__info">
               <div class="top">
                 <a-tooltip>
@@ -152,14 +151,16 @@
         </ul>
       </div>
       <a-row justify="end">
-        <a-col :span="3">
-          <a-button
-            :loading="uploadBtnLoading"
-            style="width: 100%"
-            @click="onBtnUpload"
-            type="primary"
-            >上传</a-button
-          >
+        <a-col :span="4">
+          <a-space>
+            <a-button @click="onReset">重置</a-button>
+            <a-button
+              :loading="uploadBtnLoading"
+              @click="onBtnUpload"
+              type="primary"
+              >上传</a-button
+            >
+          </a-space>
         </a-col>
       </a-row>
     </div>
@@ -187,6 +188,7 @@ import Icon from "@ant-design/icons-vue";
 import { githubRaw, jsdelivrRaw } from "../config/index";
 import path from "path-browserify";
 import { useImgBedStore } from "../store/imgBed";
+import { mimeImg } from "../config/index";
 import {
   getFilePrefixName,
   getFileSubfixName,
@@ -229,7 +231,7 @@ const handleUpload = async ({ file }) => {
       id: uuidv4(),
       isHash: true,
       isRename: false,
-      rename: "xxx",
+      rename: filePrefixName,
       fileSubfixName,
       filePrefixName,
       uploadDate: Date.now(),
@@ -244,6 +246,10 @@ const handleUpload = async ({ file }) => {
   } finally {
     compressLoading.value = false;
   }
+};
+
+const onReset = () => {
+  imgList.value = [];
 };
 
 // 点击上传按钮
@@ -266,6 +272,7 @@ const onBtnUpload = async () => {
       let res = await requestUpload({
         login: config.value.login,
         repo: config.value.selectedRepos,
+        branch: config.value.selectedBranch,
         dirs:
           config.value.dirMode === 4
             ? config.value.selectedDirList.join("/")
@@ -378,7 +385,7 @@ const handlePase = (event) => {
     height: 100%;
     .wrapper {
       margin: 0 auto;
-      min-width: 888px;
+      min-width: 555px;
       flex: auto;
       overflow: auto;
       &.page-upload-right {

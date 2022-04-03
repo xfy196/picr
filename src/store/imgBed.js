@@ -6,8 +6,10 @@ export const useImgBedStore = defineStore("imgBed", {
     }),
     actions: {
         setUploadImgList(payload){
-            console.log(payload)
             this.uploadImgList.push(payload)
+        },
+        updateImgList(payload, index){
+            this.updateImgList[index] = payload
         }
     },
     persist: {
