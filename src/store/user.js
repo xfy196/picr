@@ -73,7 +73,6 @@ export const useUserStore = defineStore("user", {
           login: this.config.login,
           ...params
         })
-        console.log(contents)
         this.contents = contents
         return contents
       } catch (error) {
@@ -83,7 +82,10 @@ export const useUserStore = defineStore("user", {
   },
   getters: {
     imageContents: (state) => {
-      return state.contents.filter(file => file.type==='dir' || mime.getType(file.name).startsWith("image"))
+      return state.contents.filter(file => file.type==='dir' || mime.getType(file.name).startsWith("image")).map(file => {
+        file.isMarkdown = false
+        return file
+      })
     }
   },
   persist: {

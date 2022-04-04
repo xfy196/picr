@@ -4,6 +4,7 @@
     <div :class="{ 'page-upload-right': uploadImgList.length }" class="wrapper">
       <a-spin :spinning="compressLoading" tip="正在压缩中">
         <a-upload-dragger
+        :beforeUpload="handleBeforeUpload"
         :accept="mimeImg"
           ref="uploadRef"
           name="file"
@@ -152,7 +153,7 @@
       </div>
       <a-row justify="end">
         <a-col :span="4">
-          <a-space>
+          <a-space class="btns-box">
             <a-button @click="onReset">重置</a-button>
             <a-button
               :loading="uploadBtnLoading"
@@ -185,7 +186,6 @@ import { v4 as uuidv4 } from "uuid";
 import { useDateFormat } from "@vueuse/core";
 import { requestUpload } from "../apis/github";
 import Icon from "@ant-design/icons-vue";
-import { githubRaw, jsdelivrRaw } from "../config/index";
 import path from "path-browserify";
 import { useImgBedStore } from "../store/imgBed";
 import { mimeImg } from "../config/index";
@@ -194,7 +194,7 @@ import {
   getFileSubfixName,
   getFileName,
 } from "../utils/useFile";
-import { useCopyExternalLinks } from "../utils/useCopExternalLinks";
+import { useCopyExternalLinks, getGithubRawUrl, getJsdelivrRawUrl } from "../utils/useCopExternalLinks";
 import uploadLeft from "../components/uploadLeft/index.vue";
 
 const userStore = useUserStore();
@@ -227,6 +227,12 @@ const handleUpload = async ({ file }) => {
     let filePrefixName = getFilePrefixName(file.name);
     let fileSubfixName = getFileSubfixName(file.name);
     const compressFileRes = await lrz(file);
+    if(compressFileRes.fileLen > 1024 * 1024 * 5 || file.size > 1024 * 1024 * 5){
+      message.warning({
+        content: "文件不能超过5M"
+      })
+      return
+    }
     imgList.value.push({
       id: uuidv4(),
       isHash: true,
@@ -288,26 +294,8 @@ const onBtnUpload = async () => {
       });
       imgList.value[i].sha = res.content.sha;
       imgList.value[i].isUpload = "yes";
-      imgList.value[i].githubUrl = path.join(
-        githubRaw,
-        `/${config.value.login}/${config.value.selectedRepos}/${
-          config.value.selectedBranch
-        }/${
-          config.value.dirMode === 4
-            ? config.value.selectedDirList.join("/")
-            : config.value.selectedDir
-        }/${filename}`
-      );
-      imgList.value[i].jsdelivrUrl = path.join(
-        jsdelivrRaw,
-        `/${config.value.login}/${config.value.selectedRepos}@${
-          config.value.selectedBranch
-        }/${
-          config.value.dirMode === 4
-            ? config.value.selectedDirList.join("/")
-            : config.value.selectedDir
-        }/${filename}`
-      );
+      imgList.value[i].githubUrl = getGithubRawUrl(filename)
+      imgList.value[i].jsdelivrUrl = getJsdelivrRawUrl(filename)
       upadlodedCount.value++;
       // 每一次的上传成功我需要更新数据结构通将他保存在本地
       imgBedStore.setUploadImgList(imgList.value[i]);
@@ -548,6 +536,17 @@ const handlePase = (event) => {
             }
           }
         }
+      }
+    }
+  }
+  :deep(.btns-box){
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    .ant-space-item{
+      flex: 1;
+      button {
+        width: 100%;
       }
     }
   }

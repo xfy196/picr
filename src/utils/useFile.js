@@ -9,13 +9,13 @@ export const getFilePrefixName = (filename) => {
     // let fileNameLastIndex = filename.lastIndexOf(".");
     return isHash
       ? "." +
-          CryptoJS.SHA256(Date.now().toString()).toString().substr(0, 16) +
-          filename.indexOf(path.extname(filename))
+          CryptoJS.SHA256(Date.now().toString()).toString().substring(0, 16) +
+          path.extname(filename)
       : path.extname(filename);
   };
   // 获取文件名
 export const getFileName = (img, isRename=false) => {
-    return (img.isRename || isRename ? img.rename : img.filePrefixName) + img.fileSubfixName;
+    return ((img.isRename || isRename) ? img.rename : img.filePrefixName) + img.fileSubfixName;
 };
 // 获取文件尺寸
 export const getFileSize = (size) => {
