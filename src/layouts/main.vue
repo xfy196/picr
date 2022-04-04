@@ -4,9 +4,7 @@
       <keep-alive v-if="route.meta.keepAlive">
         <Suspense>
           <template #default>
-            <transition name="fade">
-              <component :is="Component" :key="route.name" />
-            </transition>
+            <component :is="Component" :key="route.path" />
           </template>
           <template #fallback>Loading ...</template>
         </Suspense>
@@ -14,9 +12,7 @@
       <template v-else>
         <Suspense>
           <template #default>
-            <transition name="fade">
-              <component :is="Component" :key="route.name" />
-            </transition>
+            <component :is="Component" :key="route.path" />
           </template>
           <template #fallback>Loading ...</template>
         </Suspense>
@@ -32,18 +28,5 @@ const route = useRoute();
 .layout__container {
   height: calc(100vh - 64px);
   overflow: hidden;
-  .fade-leave-active,
-  .fade-enter-active {
-    transition: all 0.5s;
-  }
-
-  .fade-enter {
-    opacity: 0;
-    transform: translateX(-30px);
-  }
-  .fade-leave-to {
-    opacity: 0;
-    transform: translateX(30px);
-  }
 }
 </style>

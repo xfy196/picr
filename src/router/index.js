@@ -10,6 +10,7 @@ const router = createRouter({
       children: [
         {
           path: "/setting",
+          name: "setting",
           component: () => import("@/views/setting.vue"),
           meta: {
             title: "图床配置",
@@ -18,6 +19,7 @@ const router = createRouter({
         },
         {
           path: "/upload",
+          name: "upload",
           component: () => import("@/views/upload.vue"),
           meta: {
             title: "图片上传",
@@ -25,13 +27,23 @@ const router = createRouter({
           },
         },
         {
-          path: "/bedmanager",
-          component: () => import("@/views/bedmanager.vue"),
+          path: "/imglist",
+          name: "imglist",
+          component: () => import("@/views/imglist.vue"),
           meta: {
             title: "图床管理",
             icon: "SettingOutlined",
           },
         },
+        {
+          path: "/config",
+          name: "config",
+          component: () => import("@/views/config.vue"),
+          meta: {
+            title: "用户配置",
+            icon: "SettingOutlined"
+          }
+        }
       ],
     },
   ],

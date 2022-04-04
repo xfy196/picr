@@ -114,7 +114,7 @@ import {
   SyncOutlined,
 } from "@ant-design/icons-vue";
 import Icon from "@ant-design/icons-vue";
-import { onMounted, ref, nextTick } from "vue";
+import { onMounted, ref, nextTick, onBeforeMount } from "vue";
 import {
   getGithubRawUrl,
   getJsdelivrRawUrl,
@@ -134,7 +134,7 @@ const showMode = ref("block");
 
 const nowDir = ref("/");
 
-onMounted(async () => {
+onBeforeMount(async () => {
   await getDirFileRequest();
 });
 
