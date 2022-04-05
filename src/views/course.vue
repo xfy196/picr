@@ -47,7 +47,7 @@
         <a-typography-paragraph class="typo-wrapper">
           <div class="op-tip-img">
             <img
-              src="https:/cdn.jsdelivr.net/gh/xfy196/images@main/WX20220405-161249.1e47e073300daa05.png"
+              src="https://cdn.jsdelivr.net/gh/xfy196/images@main/WX20220405-161249.1e47e073300daa05.png"
               alt=""
             />
           </div>
@@ -58,7 +58,7 @@
         <a-typography-paragraph class="typo-wrapper">
           <div class="op-tip-img">
             <img
-              src="https:/cdn.jsdelivr.net/gh/xfy196/images@main/WX20220405-161431.14dfcff5ad055468.png"
+              src="https://cdn.jsdelivr.net/gh/xfy196/images@main/WX20220405-161431.14dfcff5ad055468.png"
               alt=""
             />
           </div>
@@ -82,7 +82,7 @@
         <a-typography-paragraph class="typo-wrapper">
           <div class="op-tip-img">
             <img
-              src="https:/cdn.jsdelivr.net/gh/xfy196/images@main/WX20220405-155823.e4775ddcfbcf7d86.png"
+              src="https://cdn.jsdelivr.net/gh/xfy196/images@main/WX20220405-155823.e4775ddcfbcf7d86.png"
               alt=""
             />
           </div>
