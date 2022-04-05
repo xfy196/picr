@@ -18,7 +18,12 @@ export const useUserStore = defineStore("user", {
     },
     repos: [],
     branches: [],
-    contents: []
+    contents: [],
+    setting: {
+      isHash: false,
+      isMarkdown: false,
+      isCompress: false
+    }
   }),
   actions: {
     async getUser(token) {
@@ -86,14 +91,14 @@ export const useUserStore = defineStore("user", {
     },
     imageContents: (state) => {
       return state.contents.filter(file => file.type ==='file' && mime.getType(file.name).startsWith("image")).map(file => {
-        file.isMarkdown = false
+        file.isMarkdown = state.setting.isMarkdown
         return file
       })
     }
   },
   persist: {
     key: "PICR_CONFIG",
-    paths: ["config"],
+    paths: ["config","setting"],
     storage: localStorage,
   },
 });

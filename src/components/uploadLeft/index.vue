@@ -2,7 +2,7 @@
   <div class="upload-page-container">
     <ul class="imgList">
       <a-image-preview-group>
-        <li class="imgItem" v-for="(img, index) in uploadImgList" :key="img.id">
+        <li class="imgItem" v-for="(img, index) in imgList" :key="img.id">
           <div class="more" :ref="getMoreRefs.bind(null, index)">
             <a-dropdown-button
               :getPopupContainer="moreDropdownFunc.bind(null, index)"
@@ -78,12 +78,12 @@
             title="图片属性"
           >
             <div>
-              图片名称：<strong>{{ getFileName(uploadImgList[index]) }}</strong>
+              图片名称：<strong>{{ getFileName(imgList[index]) }}</strong>
             </div>
             <div>
               图片大小：<strong
                 >{{
-                  getFileSize(uploadImgList[index].compressFile.fileLen)
+                  getFileSize(imgList[index].compressFile.fileLen)
                 }}
                 KB</strong
               >
@@ -107,8 +107,8 @@ import { useCopyExternalLinks } from "@/utils/useCopExternalLinks";
 import { nextTick, ref } from "vue-demi";
 import { createVNode } from "vue";
 import { requestUpload } from "@/apis/github";
-import { useUserStore } from "../../store/user";
-import { githubRaw, jsdelivrRaw } from "../../config/index";
+import { useUserStore } from "@/store/user";
+import { githubRaw, jsdelivrRaw } from "@/config/index";
 import path from "path-browserify";
 const imgBedStore = useImgBedStore();
 
@@ -124,16 +124,15 @@ const attrVisible = ref(false);
 
 const moreRefs = ref([]);
 
-const { uploadImgList } = storeToRefs(imgBedStore);
+const { imgList } = storeToRefs(imgBedStore);
 
 const handleToMarkdown = (index) => {
-  uploadImgList.value[index].isMarkdown =
-    !uploadImgList.value[index].isMarkdown;
+  imgList.value[index].isMarkdown = !imgList.value[index].isMarkdown;
 };
 
 // 点击复制外链
 const handleCopyExternalLinks = (mode = "github", index) => {
-  useCopyExternalLinks(mode, uploadImgList.value[index]);
+  useCopyExternalLinks(mode, imgList.value[index]);
 };
 
 // 图片的删除操作
@@ -141,7 +140,7 @@ const handleImgMenuClick = ({ key }) => {
   let [attr, index] = key.split("-");
   switch (attr) {
     case "delete":
-      let [img] = uploadImgList.value.splice(index, 1);
+      let [img] = imgList.value.splice(index, 1);
       message.success({
         content: `${getFileName(img)}文件删除成功`,
       });
@@ -166,7 +165,7 @@ const getMoreRefs = (index, el) => {
 
 // 重命名的输入框失焦
 const handleRenameBlur = (index) => {
-  let filename = getFileName(uploadImgList.value[index], true);
+  let filename = getFileName(imgList.value[index], true);
 
   Modal.confirm({
     title: "重命名提示",
@@ -190,16 +189,15 @@ const handleRenameBlur = (index) => {
           message: `更新了${filename}文件，来源于${
             location.origin + location.pathname
           }`,
-          content: uploadImgList.value[index].compressFile.base64.split(",")[1],
-          sha: uploadImgList.value[index].sha,
+          content: imgList.value[index].compressFile.base64.split(",")[1],
+          sha: imgList.value[index].sha,
         });
         message.success({
           content: `更新${filename}成功`,
         });
-        uploadImgList.value[index].sha = res.content.sha;
-        uploadImgList.value[index].filePrefixName =
-          uploadImgList.value[index].rename;
-        uploadImgList.value[index].githubUrl = path.join(
+        imgList.value[index].sha = res.content.sha;
+        imgList.value[index].filePrefixName = imgList.value[index].rename;
+        imgList.value[index].githubUrl = path.join(
           githubRaw,
           `/${config.value.login}/${config.value.selectedRepos}/${
             config.value.selectedBranch
@@ -209,7 +207,7 @@ const handleRenameBlur = (index) => {
               : config.value.selectedDir
           }/${filename}`
         );
-        uploadImgList.value[index].jsdelivrUrl = path.join(
+        imgList.value[index].jsdelivrUrl = path.join(
           jsdelivrRaw,
           `/${config.value.login}/${config.value.selectedRepos}@${
             config.value.selectedBranch
@@ -219,7 +217,7 @@ const handleRenameBlur = (index) => {
               : config.value.selectedDir
           }/${filename}`
         );
-        imgBedStore.updateImgList(uploadImgList.value[index], index);
+        imgBedStore.updateImgList(imgList.value[index], index);
       } catch (error) {
         message.error({
           content: error.message,

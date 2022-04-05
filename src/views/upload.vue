@@ -202,7 +202,7 @@ const uploadBtnLoading = ref(false);
 
 const upadlodedCount = ref(0);
 
-const { config } = storeToRefs(userStore);
+const { config, setting } = storeToRefs(userStore);
 
 const uploadRef = ref(null);
 
@@ -222,10 +222,13 @@ const handleSelectedDir = () => {
 
 const handleUpload = async ({ file }) => {
   try {
-    compressLoading.value = true;
     let filePrefixName = getFilePrefixName(file.name);
-    let fileSubfixName = getFileSubfixName(file.name);
-    const compressFileRes = await lrz(file);
+    let fileSubfixName = getFileSubfixName(file.name, setting.value.isHash);
+    let compressFileRes = null
+    if(setting.value.isCompress){
+      compressLoading.value = true;
+      compressFileRes = await lrz(file);
+    }
     if(compressFileRes.fileLen > 1024 * 1024 * 5 || file.size > 1024 * 1024 * 5){
       message.warning({
         content: "文件不能超过5M"
@@ -234,7 +237,7 @@ const handleUpload = async ({ file }) => {
     }
     imgList.value.push({
       id: uuidv4(),
-      isHash: true,
+      isHash: setting.value.isHash,
       isRename: false,
       rename: filePrefixName,
       fileSubfixName,
@@ -242,7 +245,7 @@ const handleUpload = async ({ file }) => {
       uploadDate: Date.now(),
       isUpload: "no",
       compressFile: compressFileRes,
-      isMarkdown: false,
+      isMarkdown: setting.value.isMarkdown,
       githubUrl: "",
       jsdelivrUrl: "",
     });
