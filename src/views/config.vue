@@ -11,8 +11,14 @@
     </div>
     <div class="label">压缩配置：</div>
     <div class="config">
-      <a-switch v-model:checked="setting.isCompress" :disabled="disabled" />
-      <span class="config__txt">是否压缩图片</span>
+      <a-input-number
+        step="0.1"
+        v-model:value="setting.compressValue"
+        :min="0"
+        :max="1"
+      />
+
+      <span class="config__txt">图片压缩质量</span>
     </div>
   </a-card>
 </template>

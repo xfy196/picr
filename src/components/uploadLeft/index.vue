@@ -257,6 +257,14 @@ const pushRenameRefs = (el) => {
       padding-bottom: 6px;
       overflow: hidden;
       position: relative;
+      :deep(.ant-image) {
+        width: 100%;
+        height: 240px;
+        .img {
+          height: 100%;
+          object-fit: cover;
+        }
+      }
       .more {
         position: absolute;
         right: 8px;
@@ -278,11 +286,6 @@ const pushRenameRefs = (el) => {
       }
       &:last-of-type {
         margin-bottom: 12px;
-      }
-      .img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
       }
       .rename__input {
         padding: 0 6px;

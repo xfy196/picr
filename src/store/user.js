@@ -22,7 +22,7 @@ export const useUserStore = defineStore("user", {
     setting: {
       isHash: false,
       isMarkdown: false,
-      isCompress: false
+      compressValue: 0.7
     }
   }),
   actions: {

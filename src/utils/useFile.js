@@ -19,5 +19,5 @@ export const getFileName = (img, isRename=false) => {
 };
 // 获取文件尺寸
 export const getFileSize = (size) => {
-  return (size / 1024).toFixed(2)
+  return (size / 1024 / 1024).toFixed(2)
 } 

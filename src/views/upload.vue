@@ -4,8 +4,8 @@
     <div :class="{ 'page-upload-right': uploadImgList.length }" class="wrapper">
       <a-spin :spinning="compressLoading" tip="正在压缩中">
         <a-upload-dragger
-        :beforeUpload="handleBeforeUpload"
-        :accept="mimeImg"
+          :beforeUpload="handleBeforeUpload"
+          :accept="mimeImg"
           ref="uploadRef"
           name="file"
           :multiple="true"
@@ -67,9 +67,9 @@
 
                 <div class="img__info">
                   <span>
-                    <del>{{ img.compressFile.origin.size }}KB</del>
+                    <del>{{ getFileSize(img.compressFile.origin.size) }}M</del>
                   </span>
-                  <span>{{ img.compressFile.fileLen }}KB</span>
+                  <span>{{ getFileSize(img.compressFile.fileLen) }}M</span>
                   <span>
                     {{
                       useDateFormat(img.uploadDate, "YYYY-MM-DD HH:mm:ss").value
@@ -192,8 +192,13 @@ import {
   getFilePrefixName,
   getFileSubfixName,
   getFileName,
+  getFileSize
 } from "../utils/useFile";
-import { useCopyExternalLinks, getGithubRawUrl, getJsdelivrRawUrl } from "../utils/useCopExternalLinks";
+import {
+  useCopyExternalLinks,
+  getGithubRawUrl,
+  getJsdelivrRawUrl,
+} from "../utils/useCopExternalLinks";
 import uploadLeft from "../components/uploadLeft/index.vue";
 
 const userStore = useUserStore();
@@ -224,16 +229,18 @@ const handleUpload = async ({ file }) => {
   try {
     let filePrefixName = getFilePrefixName(file.name);
     let fileSubfixName = getFileSubfixName(file.name, setting.value.isHash);
-    let compressFileRes = null
-    if(setting.value.isCompress){
-      compressLoading.value = true;
-      compressFileRes = await lrz(file);
-    }
-    if(compressFileRes.fileLen > 1024 * 1024 * 5 || file.size > 1024 * 1024 * 5){
+    compressLoading.value = true;
+    let compressFileRes = await lrz(file, {
+      quality: setting.value.compressValue
+    });
+    if (
+      compressFileRes.fileLen > 1024 * 1024 * 10 ||
+      file.size > 1024 * 1024 * 10
+    ) {
       message.warning({
-        content: "文件不能超过5M"
-      })
-      return
+        content: "文件不能超过10M",
+      });
+      return;
     }
     imgList.value.push({
       id: uuidv4(),
@@ -296,8 +303,8 @@ const onBtnUpload = async () => {
       });
       imgList.value[i].sha = res.content.sha;
       imgList.value[i].isUpload = "yes";
-      imgList.value[i].githubUrl = getGithubRawUrl(filename)
-      imgList.value[i].jsdelivrUrl = getJsdelivrRawUrl(filename)
+      imgList.value[i].githubUrl = getGithubRawUrl(filename);
+      imgList.value[i].jsdelivrUrl = getJsdelivrRawUrl(filename);
       upadlodedCount.value++;
       // 每一次的上传成功我需要更新数据结构通将他保存在本地
       imgBedStore.setUploadImgList(imgList.value[i]);
@@ -541,11 +548,11 @@ const handlePase = (event) => {
       }
     }
   }
-  :deep(.btns-box){
+  :deep(.btns-box) {
     width: 100%;
     display: flex;
     justify-content: space-between;
-    .ant-space-item{
+    .ant-space-item {
       flex: 1;
       button {
         width: 100%;
