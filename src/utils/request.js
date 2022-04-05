@@ -12,6 +12,10 @@ request.interceptors.request.use(
     const token =
       localStorage.getItem("GITHUB__TOKEN") || userStore.config.token;
     token && (config.headers.Authorization = `token ${token}`);
+    config.params = {
+      ...config.params,
+      _t: Date.now()
+    }
     return config;
   },
   (error) => {

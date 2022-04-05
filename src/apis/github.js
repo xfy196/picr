@@ -21,7 +21,7 @@ export const requetsBranches = (params) => {
 // 获取分支下的文件目录
 export const requestBranchCatalogue = async (params) => {
     return request({
-        url: `/repos/${params.login}/${params.repo}/contents/${params.dir}`,
+        url: path.join(`/repos/${params.login}/${params.repo}/contents/${params.dir}`),
         params: params.query
     })
 }

@@ -19,8 +19,11 @@ export const getGithubRawUrl = (filename, isGithubOrigin = false) => {
   if (isGithubOrigin) {
     pathFilename = filename;
   }
-  return githubRaw +  path.join(
-    `/${config.value.login}/${config.value.selectedRepos}/${config.value.selectedBranch}/${filename}`
+  return (
+    githubRaw +
+    path.join(
+      `/${config.value.login}/${config.value.selectedRepo}/${config.value.selectedBranch}/${filename}`
+    )
   );
 };
 
@@ -35,12 +38,19 @@ export const getJsdelivrRawUrl = (filename, isGithubOrigin = false) => {
   if (isGithubOrigin) {
     pathFilename = filename;
   }
-  return jsdelivrRaw + path.join(
-    `/${config.value.login}/${config.value.selectedRepos}@${config.value.selectedBranch}/${pathFilename}`
+  return (
+    jsdelivrRaw +
+    path.join(
+      `/${config.value.login}/${config.value.selectedRepo}@${config.value.selectedBranch}/${pathFilename}`
+    )
   );
 };
 
-export const useCopyExternalLinks = (mode = "github", data, isGithubOrigin = false) => {
+export const useCopyExternalLinks = (
+  mode = "github",
+  data,
+  isGithubOrigin = false
+) => {
   let filename = isGithubOrigin ? data.filename : getFileName(data);
   if (mode === "github") {
     let githubUrl = data.githubUrl;
@@ -56,10 +66,18 @@ export const useCopyExternalLinks = (mode = "github", data, isGithubOrigin = fal
       });
       return;
     }
-    message.success({
-      content: `${filename}${mode}外链复制成功`,
-    });
-    copy();
+
+    copy()
+      .then(() => {
+        message.success({
+          content: `${filename}${mode}外链复制成功`,
+        });
+      })
+      .catch(() => {
+        message.error({
+          content: `${filename}${mode}外链复制失败`,
+        });
+      });
   } else {
     let jsdelivrUrl = data.jsdelivrUrl;
     if (data.isMarkdown) {
@@ -74,9 +92,17 @@ export const useCopyExternalLinks = (mode = "github", data, isGithubOrigin = fal
       });
       return;
     }
-    message.success({
-      content: `${filename}外链复制成功`,
-    });
-    copy();
+
+    copy()
+      .then(() => {
+        message.success({
+          content: `${filename}外链复制成功`,
+        });
+      })
+      .catch(() => {
+        message.error({
+          content: `${filename}外链复制失败`,
+        });
+      });
   }
 };

@@ -22,7 +22,7 @@
         <div v-if="config.id">
           <span>
             仓库:
-            <a-tag color="blue">{{ config.selectedRepos }}</a-tag>
+            <a-tag color="blue">{{ config.selectedRepo }}</a-tag>
           </span>
           <span>
             分支:
@@ -279,7 +279,7 @@ const onBtnUpload = async () => {
       imgList.value[i].isUpload = "loading";
       let res = await requestUpload({
         login: config.value.login,
-        repo: config.value.selectedRepos,
+        repo: config.value.selectedRepo,
         branch: config.value.selectedBranch,
         dirs:
           config.value.dirMode === 4

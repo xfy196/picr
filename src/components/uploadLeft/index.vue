@@ -179,7 +179,7 @@ const handleRenameBlur = (index) => {
         // 发送请求
         let res = await requestUpload({
           login: config.value.login,
-          repo: config.value.selectedRepos,
+          repo: config.value.selectedRepo,
           branch: config.value.selectedBranch,
           dirs:
             config.value.dirMode === 4
@@ -199,7 +199,7 @@ const handleRenameBlur = (index) => {
         imgList.value[index].filePrefixName = imgList.value[index].rename;
         imgList.value[index].githubUrl = path.join(
           githubRaw,
-          `/${config.value.login}/${config.value.selectedRepos}/${
+          `/${config.value.login}/${config.value.selectedRepo}/${
             config.value.selectedBranch
           }/${
             config.value.dirMode === 4
@@ -209,7 +209,7 @@ const handleRenameBlur = (index) => {
         );
         imgList.value[index].jsdelivrUrl = path.join(
           jsdelivrRaw,
-          `/${config.value.login}/${config.value.selectedRepos}@${
+          `/${config.value.login}/${config.value.selectedRepo}@${
             config.value.selectedBranch
           }/${
             config.value.dirMode === 4

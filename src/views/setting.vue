@@ -25,8 +25,8 @@
           <a-form-item label="用户名" name="login">
             <a-input readonly v-model:value="form.login" />
           </a-form-item>
-          <a-form-item name="selectedRepos" label="选择图床仓库">
-            <a-select show-search v-model:value="form.selectedRepos">
+          <a-form-item name="selectedRepo" label="选择图床仓库">
+            <a-select show-search v-model:value="form.selectedRepo">
               <a-select-option
                 v-for="repo in repos"
                 :key="repo.id"
@@ -142,7 +142,7 @@ const formRef = ref(null);
 const router = useRouter();
 
 const rules = ref({
-  selectedRepos: [
+  selectedRepo: [
     { required: true, message: "请选择文件上传的仓库", trigger: "blur" },
   ],
   selectedBranch: [
@@ -175,7 +175,7 @@ const form = ref({
 
   selectedDir: config.value.selectedDir,
 
-  selectedRepos: config.value.selectedRepos,
+  selectedRepo: config.value.selectedRepo,
 
   selectedBranch: config.value.selectedBranch,
 
@@ -189,7 +189,7 @@ const dirModeName = ref({
 
   3: "自动目录",
 
-  4: `选择${config.value.selectedRepos}仓库目录`,
+  4: `选择${config.value.selectedRepo}仓库目录`,
 });
 
 const onConfirmToken = useThrottleFn(
@@ -219,7 +219,7 @@ const onCompleteConfigure = async () => {
     userStore.updateConfig({
       dirMode: form.value.dirMode,
       selectedDir: form.value.selectedDir,
-      selectedRepos: form.value.selectedRepos,
+      selectedRepo: form.value.selectedRepo,
       selectedBranch: form.value.selectedBranch,
       selectedDirList: form.value.selectedDirList,
     });
@@ -253,7 +253,7 @@ const loadData = async (selectedOptions) => {
   const targetOption = selectedOptions[selectedOptions.length - 1];
   targetOption.loading = true;
   let contentsResult = await userStore.getBranchCatalogue({
-    repo: form.value.selectedRepos,
+    repo: form.value.selectedRepo,
     dir: form.value.selectedDirList.join("/"),
     query: {
       ref: form.value.selectedBranch,
@@ -287,7 +287,7 @@ watch(
     form.value.selectedDirList = [];
     if (val.trim()) {
       let contentsResult = await userStore.getBranchCatalogue({
-        repo: form.value.selectedRepos,
+        repo: form.value.selectedRepo,
         dir: "",
         query: {
           ref: val,
@@ -302,10 +302,10 @@ watch(
 );
 
 watch(
-  () => form.value.selectedRepos,
+  () => form.value.selectedRepo,
   async (val) => {
     if (val.trim()) {
-      if (config.value.selectedRepos !== val) {
+      if (config.value.selectedRepo !== val) {
         form.value.selectedBranch = "";
       }
       await userStore.getBranches(val);

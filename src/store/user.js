@@ -12,7 +12,7 @@ export const useUserStore = defineStore("user", {
       avatarUrl: "",
       selectedDir: "xxx",
       selectedDirList: [],
-      selectedRepos: "",
+      selectedRepo: "",
       dirMode: 1,
       selectedBranch: ""
     },
