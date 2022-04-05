@@ -81,8 +81,11 @@ export const useUserStore = defineStore("user", {
     }
   },
   getters: {
+    dirsContents: (state) => {
+      return state.contents.filter(file => file.type === 'dir')
+    },
     imageContents: (state) => {
-      return state.contents.filter(file => file.type==='dir' || mime.getType(file.name).startsWith("image")).map(file => {
+      return state.contents.filter(file => file.type ==='file' && mime.getType(file.name).startsWith("image")).map(file => {
         file.isMarkdown = false
         return file
       })

@@ -40,8 +40,17 @@ const router = createRouter({
           name: "config",
           component: () => import("@/views/config.vue"),
           meta: {
-            title: "用户配置",
+            title: "我的配置",
             icon: "SettingOutlined"
+          }
+        },
+        {
+          path: "/course",
+          name: "course",
+          component: () => import("@/views/course.vue"),
+          meta: {
+            title: "使用教程",
+            icon: "PushpinFilled"
           }
         }
       ],

@@ -97,7 +97,7 @@
 <script setup>
 import MarkdownIcon from "@/assets/imgs/markdown.svg";
 import MarkdownIconActive from "@/assets/imgs/markdown-active.svg";
-import { useImgBedStore } from "@/store/imgBed";
+import { useImgBedStore } from "@/store/img-bed";
 import { message, Modal } from "ant-design-vue";
 import { ExclamationCircleOutlined } from "@ant-design/icons-vue";
 import Icon from "@ant-design/icons-vue";

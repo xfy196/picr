@@ -186,8 +186,7 @@ import { v4 as uuidv4 } from "uuid";
 import { useDateFormat } from "@vueuse/core";
 import { requestUpload } from "../apis/github";
 import Icon from "@ant-design/icons-vue";
-import path from "path-browserify";
-import { useImgBedStore } from "../store/imgBed";
+import { useImgBedStore } from "../store/img-bed";
 import { mimeImg } from "../config/index";
 import {
   getFilePrefixName,
