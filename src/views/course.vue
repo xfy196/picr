@@ -13,7 +13,7 @@
         <a-typography-paragraph class="typo-wrapper">
           <div class="op-tip-img">
             <img
-              src="https:/cdn.jsdelivr.net/gh/xfy196/images@main/image.4dd81e08a139d53d.png"
+              src="https://cdn.jsdelivr.net/gh/xfy196/images@main/image.4dd81e08a139d53d.png"
               alt=""
             />
           </div>
