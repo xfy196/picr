@@ -267,7 +267,9 @@ const handleBatchDelete = async () => {
   const imgIds = [...toRaw(selectedImgIds.value)];
   for (let i = 0; i < imgIds.length; i++) {
     try {
-      deleteLoadingIndex.value = imageContents.value.findIndex(item => item.name === imgIds[i]);
+      deleteLoadingIndex.value = imageContents.value.findIndex(
+        (item) => item.name === imgIds[i]
+      );
       await requestDeleteFile({
         login: config.value.login,
         repo: config.value.selectedRepo,
@@ -283,17 +285,21 @@ const handleBatchDelete = async () => {
           sha: imageContents.value[deleteLoadingIndex.value].sha,
         },
       });
-      imageContents.value.shift()
-      selectedImgIds.value.shift()
+      imageContents.value.shift();
+      selectedImgIds.value.shift();
       message.success({
-        content: `${imageContents.value[deleteLoadingIndex.value].name}文件删除成功`,
+        content: `${
+          imageContents.value[deleteLoadingIndex.value].name
+        }文件删除成功`,
       });
     } catch (error) {
-      console.log(error)
+      console.log(error);
       message.error({
-        content: `${imageContents.value[deleteLoadingIndex.value].name}文件删除失败`,
+        content: `${
+          imageContents.value[deleteLoadingIndex.value].name
+        }文件删除失败`,
       });
-    }finally{
+    } finally {
       deleteLoadingIndex.value = -1;
     }
   }
@@ -304,10 +310,7 @@ const handleBatchCopyLink = () => {
   let imgLinks = [];
   for (let i = 0; i < selectedImgIds.value.length; i++) {
     imgLinks.push(
-      getJsdelivrRawUrl(
-        imageContents.value[selectedImgIds.value[i]].path,
-        true
-      )
+      getJsdelivrRawUrl(imageContents.value[selectedImgIds.value[i]].path, true)
     );
   }
   const { copy, isSupported } = useClipboard({ source: imgLinks.join(",") });
@@ -457,7 +460,7 @@ const getDirFileRequest = async () => {
         .card__body {
           height: 100%;
           overflow: auto;
-          .ant-checkbox-group{
+          .ant-checkbox-group {
             width: 100%;
           }
         }
@@ -500,12 +503,6 @@ const getDirFileRequest = async () => {
       }
       .card__grid {
         position: relative;
-        .ant-spin-nested-loading{
-          width: 100%;
-          .ant-spin-container{
-            display: flex;
-          }
-        }
         .filename {
           white-space: nowrap;
           text-overflow: ellipsis;
@@ -547,6 +544,14 @@ const getDirFileRequest = async () => {
         margin: 12px;
         display: flex;
         height: 164px;
+        .ant-spin-nested-loading {
+          width: 100%;
+          height: 100%;
+          .ant-spin-container {
+            display: flex;
+            height: 100%;
+          }
+        }
         .ant-image {
           width: 120px;
           height: 120px;
