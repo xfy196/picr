@@ -500,6 +500,12 @@ const getDirFileRequest = async () => {
       }
       .card__grid {
         position: relative;
+        .ant-spin-nested-loading{
+          width: 100%;
+          .ant-spin-container{
+            display: flex;
+          }
+        }
         .filename {
           white-space: nowrap;
           text-overflow: ellipsis;
