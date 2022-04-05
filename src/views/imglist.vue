@@ -457,6 +457,9 @@ const getDirFileRequest = async () => {
         .card__body {
           height: 100%;
           overflow: auto;
+          .ant-checkbox-group{
+            width: 100%;
+          }
         }
       }
       &.hasSelectedOp {
