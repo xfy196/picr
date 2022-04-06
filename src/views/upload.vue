@@ -551,6 +551,7 @@ const handlePase = (event) => {
   :deep(.btns-box) {
     width: 100%;
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     .ant-space-item {
       flex: 1;
