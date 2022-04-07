@@ -2,10 +2,20 @@
   "name": "picr",
   "private": true,
   "version": "0.0.0",
+  "main": "main.js",
+  "author": {
+    "name": "小小荧"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "app:dev": "electron ./electron/main.js",
+    "app:dist": "electron-builder build",
+    "app:64": "electron-builder --win --x64",
+    "app:linux": "electron-builder --linux",
+    "app:mac": "electron-builder --mac",
+    "app:dir": "electron-builder --dir"
   },
   "dependencies": {
     "@ant-design/icons-vue": "^6.1.0",
@@ -13,6 +23,8 @@
     "ant-design-vue": "^2.2.8",
     "axios": "^0.26.1",
     "crypto-js": "^4.1.1",
+    "electron-is-dev": "^2.0.0",
+    "electron-squirrel-startup": "^1.0.0",
     "lrz": "^4.9.41",
     "mime": "^3.0.0",
     "normalize.css": "^8.0.1",
@@ -25,9 +37,61 @@
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^2.2.0",
+    "cross-env": "^7.0.3",
+    "electron": "^18.0.3",
+    "electron-builder": "^22.14.13",
     "sass": "^1.49.9",
     "unplugin-vue-components": "^0.18.4",
     "vite": "^2.8.0",
     "vite-svg-loader": "^3.1.2"
+  },
+  "build": {
+    "appId": "top.xxycode.picr",
+    "productName": "PicR",
+    "copyright": "Copyright © 2022 ${author}",
+    "files": [
+      "dist/**/*",
+      "node_modules/**/*",
+      "electron/**/*",
+      "package.json"
+    ],
+    "directories": {
+      "output": "build",
+      "buildResources": "./dist/"
+    },
+    "extraMetadata": {
+      "main": "./electron/main.js"
+    },
+    "extends": null,
+    "publish": [
+      "github"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        },
+        {
+          "target": "msi",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        }
+      ],
+      "icon": "./dist/favicon.ico",
+      "artifactName": "${productName}-Web-Setup-${version}.${ext}",
+      "publisherName": "PicR"
+    },
+    "nsis": {
+      "allowToChangeInstallationDirectory": true,
+      "oneClick": false,
+      "perMachine": false,
+      "installerIcon": "./dist/favicon.ico"
+    }
   }
 }
