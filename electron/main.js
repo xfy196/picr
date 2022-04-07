@@ -15,9 +15,9 @@ function createWindow() {
   // 加载 index.html
   if (isDev) {
     mainWindow.loadURL("http://localhost:3000/");
+    mainWindow.webContents.openDevTools();
   } else {
     mainWindow.loadFile('./dist/index.html'); // 此处跟electron官网路径不同，需要注意
-    mainWindow.webContents.openDevTools();
   }
 }
 app.whenReady().then(() => {
