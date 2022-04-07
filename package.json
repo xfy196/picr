@@ -83,9 +83,22 @@
           ]
         }
       ],
-      "icon": "./dist/favicon.ico",
+      "icon": "./src/assets/logo.png",
       "artifactName": "${productName}-Web-Setup-${version}.${ext}",
       "publisherName": "PicR"
+    },
+    "linux": {
+      "category": "Chat;GNOME;GTK;Network;InstantMessaging",
+      "packageCategory": "GNOME;GTK;Network;InstantMessaging",
+      "description": "PicR CDN图床 Linux 桌面端",
+      "target": [
+        "deb",
+        "zip",
+        "AppImage",
+        "snap"
+      ],
+      "maintainer": "Akash Nimare ",
+      "artifactName": "${productName}-${version}-${arch}.${ext}"
     },
     "nsis": {
       "allowToChangeInstallationDirectory": true,
