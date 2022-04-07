@@ -15,7 +15,7 @@ const isShow = ref(false);
 onMounted(() => {
   const script = document.createElement("script");
   script.async = true;
-  script.src = "//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js";
+  script.src = "https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js";
   siteCountDom.value.appendChild(script);
   script.onload = function () {
     nextTick(() => {
