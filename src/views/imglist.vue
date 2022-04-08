@@ -250,7 +250,7 @@ const onSelectedAllChange = (e) => {
   let checked = e.target.checked;
   if (checked) {
     for (let i = 0; i < imageContents.value.length; i++) {
-      selectedImgIds.value.push(imageContents.value.name);
+      selectedImgIds.value.push(imageContents.value[i].name);
     }
   } else {
     selectedImgIds.value = [];
