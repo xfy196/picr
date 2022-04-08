@@ -9,13 +9,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview",
-    "app:dev": "electron ./electron/main.js",
-    "app:dist": "electron-builder build",
-    "app:64": "electron-builder --win --x64",
-    "app:linux": "electron-builder --linux",
-    "app:mac": "electron-builder --mac",
-    "app:dir": "electron-builder --dir"
+    "preview": "vite preview"
   },
   "dependencies": {
     "@ant-design/icons-vue": "^6.1.0",
@@ -37,9 +31,6 @@
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^2.2.0",
-    "cross-env": "^7.0.3",
-    "electron": "^18.0.3",
-    "electron-builder": "^22.14.13",
     "sass": "^1.49.9",
     "unplugin-vue-components": "^0.18.4",
     "vite": "^2.8.0",
