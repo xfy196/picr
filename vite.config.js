@@ -12,5 +12,4 @@ export default defineConfig({
       "@": path.join(__dirname, "./src/"),
     },
   },
-  base:'/picr',
 });
