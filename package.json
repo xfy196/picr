@@ -1,7 +1,7 @@
 {
   "name": "picr",
   "private": true,
-  "version": "1.0.3",
+  "version": "1.0.4",
   "main": "main.js",
   "author": {
     "name": "小小荧"
@@ -65,6 +65,9 @@
     "publish": [
       "github"
     ],
+    "mac": {
+      "icon": "./src/assets/logo.png"
+    },
     "win": {
       "target": [
         {
@@ -87,6 +90,7 @@
       "publisherName": "PicR"
     },
     "linux": {
+      "icon": "./src/assets/logo.png",
       "category": "Chat;GNOME;GTK;Network;InstantMessaging",
       "packageCategory": "GNOME;GTK;Network;InstantMessaging",
       "description": "PicR CDN图床 Linux 桌面端",
