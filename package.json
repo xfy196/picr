@@ -84,7 +84,7 @@
         }
       ],
       "icon": "./src/assets/logo.png",
-      "artifactName": "${productName}-Web-Setup-${version}.${ext}",
+      "artifactName": "${productName}-Setup-${version}-${arch}.${ext}",
       "publisherName": "PicR"
     },
     "linux": {
