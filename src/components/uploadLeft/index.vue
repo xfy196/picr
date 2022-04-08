@@ -22,14 +22,14 @@
 
           <a-image class="img" :src="img.compressFile.base64" />
           <template v-if="renameIndex !== index">
-            <a-tooltip>
-              <template #title>
+            <div class="filename">
+              <a-tooltip>
+                <template #title>
+                  {{ getFileName(img) }}
+                </template>
                 {{ getFileName(img) }}
-              </template>
-              <div class="filename">
-                {{ getFileName(img) }}
-              </div>
-            </a-tooltip>
+              </a-tooltip>
+            </div>
           </template>
           <div class="rename__input" v-show="renameIndex === index">
             <a-input
