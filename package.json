@@ -1,7 +1,7 @@
 {
   "name": "picr",
   "private": true,
-  "version": "1.0.2",
+  "version": "1.0.3",
   "main": "main.js",
   "author": {
     "name": "小小荧"
@@ -9,7 +9,13 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "app:dev": "electron ./electron/main.js",
+    "app:dist": "electron-builder build",
+    "app:64": "electron-builder --win --x64",
+    "app:linux": "electron-builder --linux",
+    "app:mac": "electron-builder --mac",
+    "app:dir": "electron-builder --dir"
   },
   "dependencies": {
     "@ant-design/icons-vue": "^6.1.0",
@@ -32,6 +38,8 @@
   "devDependencies": {
     "@vitejs/plugin-vue": "^2.2.0",
     "sass": "^1.49.9",
+    "electron": "^18.0.3",
+    "electron-builder": "^22.14.13",
     "unplugin-vue-components": "^0.18.4",
     "vite": "^2.8.0",
     "vite-svg-loader": "^3.1.2"
