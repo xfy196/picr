@@ -1,5 +1,5 @@
 <template>
-  <a-image-preview-group>
+  <a-image-preview-group v-if="config.id">
     <a-spin
       wrapperClassName="loading__container"
       :spinning="loading"
@@ -243,6 +243,11 @@ const selectedAll = ref(false);
 const nowDir = ref("/");
 
 onBeforeMount(async () => {
+  if(!config.value.id){
+    message.warning({
+      content: "请求登录"
+    })
+  }
   await getDirFileRequest();
 });
 
