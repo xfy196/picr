@@ -19,11 +19,11 @@ export const getGithubRawUrl = (filename, isGithubOrigin = false) => {
   if (isGithubOrigin) {
     pathFilename = filename;
   }
-  return (
+  return encodeURI(
     githubRaw +
-    path.join(
-      `/${config.value.login}/${config.value.selectedRepo}/${config.value.selectedBranch}/${filename}`
-    )
+      path.join(
+        `/${config.value.login}/${config.value.selectedRepo}/${config.value.selectedBranch}/${filename}`
+      )
   );
 };
 
@@ -38,11 +38,11 @@ export const getJsdelivrRawUrl = (filename, isGithubOrigin = false) => {
   if (isGithubOrigin) {
     pathFilename = filename;
   }
-  return (
+  return encodeURI(
     jsdelivrRaw +
-    path.join(
-      `/${config.value.login}/${config.value.selectedRepo}@${config.value.selectedBranch}/${pathFilename}`
-    )
+      path.join(
+        `/${config.value.login}/${config.value.selectedRepo}@${config.value.selectedBranch}/${pathFilename}`
+      )
   );
 };
 
