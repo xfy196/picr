@@ -17,7 +17,7 @@
         >
       </a-form-item>
       <a-spin
-        style="width: 100%;, min-height: '100px';"
+        style="width: 100%;, min-height: 100px;"
         :spinning="loading"
         tip="Loading..."
       >
@@ -26,7 +26,11 @@
             <a-input readonly v-model:value="form.login" />
           </a-form-item>
           <a-form-item name="selectedRepo" label="选择图床仓库">
-            <a-select show-search v-model:value="form.selectedRepo">
+            <a-select
+              @popupScroll="popupScroll"
+              show-search
+              v-model:value="form.selectedRepo"
+            >
               <a-select-option
                 v-for="repo in repos"
                 :key="repo.id"
@@ -127,7 +131,12 @@ import { ref, onMounted, watch } from "vue";
 
 import { storeToRefs } from "pinia";
 
-import { useThrottleFn, useDateFormat, useNow } from "@vueuse/core";
+import {
+  useThrottleFn,
+  useDateFormat,
+  useNow,
+  useDebounceFn,
+} from "@vueuse/core";
 
 const userStore = useUserStore();
 
@@ -212,6 +221,14 @@ const onConfirmToken = useThrottleFn(
   false
 );
 
+const popupScroll = useThrottleFn(async (e) => {
+  const bootomHeight =
+    e.target.scrollHeight - e.target.scrollTop - e.target.clientHeight;
+  if (bootomHeight < 50 && userStore.repoHasMore) {
+    userStore.setRepoPage(userStore.repoPage + 1);
+    await userStore.getRepos();
+  }
+});
 // 完成配置
 const onCompleteConfigure = async () => {
   try {
@@ -241,7 +258,7 @@ const onChangeDirMode = () => {
   if (form.value.dirMode === 2) {
     form.value.selectedDir = "/";
   } else if (form.value.dirMode === 3) {
-    form.value.selectedDir = useDateFormat(useNow(), "YYYYMMDD").value;
+    form.value.selectedDir = useDateFormat(useNow(), "YYYY/MM/DD").value;
   } else if (form.value.dirMode === 1) {
     form.value.selectedDir = "xxx";
   } else if (form.value.dirMode === 4) {
