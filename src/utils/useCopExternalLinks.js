@@ -30,11 +30,7 @@ export const getGithubRawUrl = (filename, isGithubOrigin = false) => {
 export const getJsdelivrRawUrl = (filename, isGithubOrigin = false) => {
   const userStore = useUserStore();
   const { config } = storeToRefs(userStore);
-  let pathFilename = `${
-    config.value.dirMode === 4
-      ? config.value.selectedDirList.join("/")
-      : config.value.selectedDir
-  }/${filename}`;
+  let pathFilename = filename;
   if (isGithubOrigin) {
     pathFilename = filename;
   }

@@ -49,7 +49,7 @@ export const requestUpload = async (body) => {
 export const requestDeleteFile = async (body) => {
   return request({
     url: path.join(
-      `/repos/${body.login}/${body.repo}/contents/${body.dirs}/${body.filename}`
+      `/repos/${body.login}/${body.repo}/contents/${body.path}`
     ),
     data: body.data,
     method: "DELETE",

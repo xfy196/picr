@@ -87,6 +87,7 @@ export const useUserStore = defineStore("user", {
           login: this.config.login,
           ...params,
         });
+        console.log("🚀 ~ getBranchCatalogue ~ contents:", contents)
         this.contents = contents;
         return contents;
       } catch (error) {}

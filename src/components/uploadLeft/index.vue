@@ -112,8 +112,7 @@ import Icon, { CloudDownloadOutlined } from "@ant-design/icons-vue";
 import { storeToRefs } from "pinia";
 import { getFileName, getFileSize } from "@/utils/useFile";
 import { useCopyExternalLinks } from "@/utils/useCopExternalLinks";
-import { nextTick, ref } from "vue-demi";
-import { createVNode } from "vue";
+import { nextTick, ref, createVNode } from "vue";
 import { requestUpload } from "@/apis/github";
 import { useUserStore } from "@/store/user";
 import { githubRaw, jsdelivrRaw } from "@/config/index";
@@ -145,11 +144,30 @@ const handleCopyExternalLinks = (mode = "github", index) => {
 };
 
 // 图片的删除操作
-const handleImgMenuClick = ({ key }) => {
+const handleImgMenuClick = async ({ key }) => {
   let [attr, index] = key.split("-");
   switch (attr) {
     case "delete":
-      let [img] = imgList.value.splice(index, 1);
+      // `/repos/${body.login}/${body.repo}/contents/${body.dirs}/${body.filename}`
+
+      const img = await imgBedStore.deleteImage(
+        {
+          login: config.value.login,
+          repo: config.value.selectedRepo,
+          path: imgList.value[index].path,
+          filename: imgList.value[index].name,
+          data: {
+            message: `delete picture via PicR(${
+              location.origin + location.pathname
+            })`,
+            owner: config.value.login,
+            path: imgList.value[index].path,
+            repo: config.value.selectedRepo,
+            sha: imgList.value[index].sha,
+          },
+        },
+        index
+      );
       message.success({
         content: `${getFileName(img)}文件删除成功`,
       });
