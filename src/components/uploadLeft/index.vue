@@ -54,6 +54,14 @@
             </div>
             <div class="copy__btn--box">
               <a-tooltip>
+                <template #title> 点击下载 </template>
+                <CloudDownloadOutlined
+                  @click.stop="handleDownLoadImg(index)"
+                  :style="{ fontSize: '14px' }"
+                  class="copy__btn"
+                />
+              </a-tooltip>
+              <a-tooltip>
                 <template #title> 点击复制GitHub外链 </template>
                 <span
                   @click.stop="handleCopyExternalLinks('github', index)"
@@ -100,16 +108,16 @@ import MarkdownIconActive from "@/assets/imgs/markdown-active.svg";
 import { useImgBedStore } from "@/store/img-bed";
 import { message, Modal } from "ant-design-vue";
 import { ExclamationCircleOutlined } from "@ant-design/icons-vue";
-import Icon from "@ant-design/icons-vue";
+import Icon, { CloudDownloadOutlined } from "@ant-design/icons-vue";
 import { storeToRefs } from "pinia";
 import { getFileName, getFileSize } from "@/utils/useFile";
 import { useCopyExternalLinks } from "@/utils/useCopExternalLinks";
-import { nextTick, ref } from "vue-demi";
-import { createVNode } from "vue";
+import { nextTick, ref, createVNode } from "vue";
 import { requestUpload } from "@/apis/github";
 import { useUserStore } from "@/store/user";
 import { githubRaw, jsdelivrRaw } from "@/config/index";
 import path from "path-browserify";
+import { download } from "../../utils";
 const imgBedStore = useImgBedStore();
 
 const userStore = useUserStore();
@@ -136,11 +144,30 @@ const handleCopyExternalLinks = (mode = "github", index) => {
 };
 
 // 图片的删除操作
-const handleImgMenuClick = ({ key }) => {
+const handleImgMenuClick = async ({ key }) => {
   let [attr, index] = key.split("-");
   switch (attr) {
     case "delete":
-      let [img] = imgList.value.splice(index, 1);
+      // `/repos/${body.login}/${body.repo}/contents/${body.dirs}/${body.filename}`
+
+      const img = await imgBedStore.deleteImage(
+        {
+          login: config.value.login,
+          repo: config.value.selectedRepo,
+          path: imgList.value[index].path,
+          filename: imgList.value[index].name,
+          data: {
+            message: `delete picture via PicR(${
+              location.origin + location.pathname
+            })`,
+            owner: config.value.login,
+            path: imgList.value[index].path,
+            repo: config.value.selectedRepo,
+            sha: imgList.value[index].sha,
+          },
+        },
+        index
+      );
       message.success({
         content: `${getFileName(img)}文件删除成功`,
       });
@@ -161,6 +188,25 @@ const moreDropdownFunc = (index) => moreRefs.value[index];
 
 const getMoreRefs = (index, el) => {
   moreRefs.value[index] = el;
+};
+
+/**
+ * @description: 点击下载图片
+ * @author 小小荧 <xfy196@outlook.com>
+ * @param {number} [index]
+ * @return {void}
+ * @date 2023-08-17 20:02
+ */
+const handleDownLoadImg = (index) => {
+  const imgData = imgList.value[index];
+  download(
+    imgData.jsdelivrUrl,
+    imgData.filePrefixName + imgData.fileSubfixName
+  );
+  console.log(
+    "🚀 ~ file: index.vue:183 ~ handleDownLoadImg ~ imgData:",
+    imgData
+  );
 };
 
 // 重命名的输入框失焦

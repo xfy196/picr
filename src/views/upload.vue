@@ -177,7 +177,7 @@ import {
 } from "@ant-design/icons-vue";
 import MarkdownIcon from "@/assets/imgs/markdown.svg";
 import MarkdownIconActive from "@/assets/imgs/markdown-active.svg";
-import { ref } from "vue-demi";
+import { ref } from "vue";
 import { message } from "ant-design-vue";
 import lrz from "lrz";
 import { useUserStore } from "../store/user";
@@ -305,6 +305,8 @@ const onBtnUpload = async () => {
       imgList.value[i].isUpload = "yes";
       imgList.value[i].githubUrl = getGithubRawUrl(filename);
       imgList.value[i].jsdelivrUrl = getJsdelivrRawUrl(filename);
+      imgList.value[i].name = res.content.name
+      imgList.value[i].path = res.content.path
       upadlodedCount.value++;
       // 每一次的上传成功我需要更新数据结构通将他保存在本地
       imgBedStore.setUploadImgList(imgList.value[i]);

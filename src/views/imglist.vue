@@ -243,10 +243,10 @@ const selectedAll = ref(false);
 const nowDir = ref("/");
 
 onBeforeMount(async () => {
-  if(!config.value.id){
+  if (!config.value.id) {
     message.warning({
-      content: "请求登录"
-    })
+      content: "请求登录",
+    });
   }
   await getDirFileRequest();
 });
@@ -278,8 +278,7 @@ const handleBatchDelete = async () => {
       await requestDeleteFile({
         login: config.value.login,
         repo: config.value.selectedRepo,
-        dirs: nowDir.value,
-        filename: imageContents.value[deleteLoadingIndex.value].name,
+        path: imageContents.value[deleteLoadingIndex.value].path,
         data: {
           message: `delete picture via PicR(${
             location.origin + location.pathname

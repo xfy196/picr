@@ -106,7 +106,7 @@
   </a-card>
 </template>
 <script setup>
-import { ref } from "vue-demi";
+import { ref } from "vue";
 
 const current = ref(0);
 const handleNextBtn = () => {
