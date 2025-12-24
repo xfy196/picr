@@ -143,7 +143,7 @@
                   class="img__selected_checkbox"
                   :value="img.name"
                 />
-                <a-image :src="getJsdelivrRawUrl(img.path)" />
+                <a-image :src="getJsdelivrRawUrl(img.path, true)" />
                 <div class="filename">
                   <a-tooltip>
                     <template #title> {{ img.name }} </template>
